@@ -1,0 +1,94 @@
+<!DOCTYPE html> https://sites.google.com/view/workfromhomewithshawn/client-profile
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Client Profile | Work from Home with Shawn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%); color: #222; margin: 0; }
+        header, footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 4px 24px #0002; }
+        .container { max-width: 900px; margin: 24px auto; padding: 24px; background: rgba(255,255,255,0.95); border-radius: 10px; box-shadow: 0 2px 8px #0001; }
+        .profile-header { display: flex; align-items: center; gap: 32px; margin-bottom: 32px; }
+        .profile-avatar { width: 90px; height: 90px; border-radius: 50%; background: #7a684a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2.7em; font-weight: bold; }
+        .profile-info { flex: 1; }
+        .profile-info h1 { margin: 0 0 10px 0; font-size: 2em; color: #7a684a; }
+        .profile-contact { color: #222; font-size: 1.08em; margin-bottom: 4px; }
+        .section-title { font-size: 1.3em; color: #7a684a; margin-top: 40px; margin-bottom: 16px; font-weight: bold; }
+        .dashboard-card { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 20px; margin-bottom: 24px; }
+        .card-title { font-size: 1.15em; color: #7a684a; margin-bottom: 10px; font-weight: bold; }
+        .manage-btn { background: #e6c77d; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .manage-btn:hover { background: #d4b05c; }
+        .job-list { list-style: none; padding: 0; margin: 0 0 10px 0; }
+        .job-list li { margin-bottom: 8px; }
+        .quick-actions { display: flex; gap: 16px; margin-top: 20px; }
+        .quick-action { background: #eaf0fa; color: #7a684a; border-radius: 6px; padding: 14px 20px; text-align: center; font-weight: 500; text-decoration: none; box-shadow: 0 2px 8px #0001; transition: background 0.2s; }
+        .quick-action:hover { background: #e6c77d; color: #222; }
+        @media (max-width: 700px) {
+            .profile-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .container { padding: 12px; }
+            .quick-actions { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Client Profile</h1>
+</header>
+<div class="container">
+    <div class="profile-header">
+        <div class="profile-avatar" id="client-avatar">C</div>
+        <div class="profile-info">
+            <h1 id="client-name">Client Name</h1>
+            <div class="profile-contact"><strong>Email:</strong> <span id="client-email">client@email.com</span></div>
+            <div class="profile-contact"><strong>Company:</strong> <span id="client-company">Your Company Name</span></div>
+        </div>
+        <button class="manage-btn" onclick="window.location.href='https://sites.google.com/view/workfromhomewithshawn/jobs-listing-page'">View Public Job Board</button>
+    </div>
+
+    <div class="section-title">My Posted Jobs</div>
+    <div class="dashboard-card">
+        <div class="card-title">Active Job Listings</div>
+        <ul class="job-list" id="client-job-list">
+            <li>
+                Customer Support Specialist - <strong>12 Applications</strong>
+                <button class="manage-btn" style="margin-left:10px;">Manage</button>
+            </li>
+            <li>
+                Virtual Assistant - <strong>8 Applications</strong>
+                <button class="manage-btn" style="margin-left:10px;">Manage</button>
+            </li>
+            <!-- More jobs can be dynamically added here -->
+        </ul>
+        <button class="manage-btn" onclick="window.location.href='https://sites.google.com/view/workfromhomewithshawn/post-a-new-job'">Post a New Job</button>
+    </div>
+
+    <div class="section-title">Recent Applications</div>
+    <div class="dashboard-card">
+        <div class="card-title">New Applicants</div>
+        <ul class="job-list" id="client-applications-list">
+            <li>Jordan Smith - Customer Support Specialist</li>
+            <li>Alex Johnson - Virtual Assistant</li>
+            <!-- More applications can be dynamically added here -->
+        </ul>
+        <button class="manage-btn" onclick="window.location.href='https://sites.google.com/view/workfromhomewithshawn/messaginginbox-page'">View Inbox</button>
+    </div>
+
+    <div class="section-title">Quick Actions</div>
+    <div class="quick-actions">
+        <a class="quick-action" href="https://sites.google.com/view/workfromhomewithshawn/post-a-new-job">+ Post Job</a>
+        <a class="quick-action" href="https://sites.google.com/view/workfromhomewithshawn/messaginginbox-page">Inbox</a>
+        <a class="quick-action" href="https://sites.google.com/view/workfromhomewithshawn/contact-support-page">Contact Support</a>
+        <a class="quick-action" href="https://sites.google.com/view/workfromhomewithshawn/terms-and-privacy-page">Terms & Privacy</a>
+    </div>
+</div>
+<footer>
+    &copy; 2024 Work from Home with Shawn
+</footer>
+<script>
+// Example: Populate client info dynamically if using authentication
+// document.getElementById('client-name').textContent = "Acme Corp";
+// document.getElementById('client-email').textContent = "hr@acmecorp.com";
+// document.getElementById('client-company').textContent = "Acme Corp";
+</script>
+</body>
+</html>
