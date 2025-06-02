@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile | Work from Home with Shawn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Copy your site's CSS here or link to your main stylesheet -->
+    <style>
+        /* ...copy your main styles here for header, .container, etc... */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%);
+            color: #222;
+            min-height: 100vh;
+        }
+        header {
+            position: sticky; top: 0; z-index: 10;
+            display: flex; align-items: center; padding: 24px 48px;
+            background: #fff; box-shadow: 0 4px 24px #0002;
+        }
+        .logo { font-size: 2.2em; font-weight: bold; color: #7a684a; letter-spacing: 1px; }
+        nav { margin-left: 40px; }
+        nav a { margin: 0 18px; text-decoration: none; color: #222; font-weight: 500; font-size: 1.08em; }
+        nav a.active, nav a:hover { color: #7a684a; border-bottom: 2px solid #e6c77d; padding-bottom: 4px; }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px #0002;
+            padding: 40px 32px 32px 32px;
+        }
+        h2 { color: #7a684a; }
+        .profile-row { margin-bottom: 18px; }
+        .profile-label { font-weight: bold; color: #7a684a; }
+        .profile-value { margin-left: 10px; }
+        .logout-btn {
+            background: #7a684a; color: #fff; border: none; border-radius: 6px; padding: 10px 24px; font-size: 1em; font-weight: 600; cursor: pointer;
+        }
+        .logout-btn:hover { background: #5e513a; }
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko",
+            authDomain: "workwithshawnauth.firebaseapp.com",
+            projectId: "workwithshawnauth",
+            storageBucket: "workwithshawnauth.firebasestorage.app",
+            messagingSenderId: "38163174001",
+            appId: "1:38163174001:web:45a352c8da0112bcfe41d0"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.onload = () => {
+            const nameEl = document.getElementById('profile-name');
+            const emailEl = document.getElementById('profile-email');
+            const phoneEl = document.getElementById('profile-phone');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = "https://sites.google.com/view/workfromhomewithshawn/sign-in-sign-up";
+                    return;
+                }
+                nameEl.textContent = user.displayName || '';
+                emailEl.textContent = user.email || '';
+                // Fetch extra info from Firestore
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    phoneEl.textContent = data.phone || '';
+                    // Add more fields as needed
+                }
+            });
+
+            logoutBtn.onclick = async () => {
+                await signOut(auth);
+                window.location.href = "https://sites.google.com/view/workfromhomewithshawn/sign-in-sign-up";
+            };
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <div class="logo">Work from Home with Shawn</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="jobs.html">Jobs</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+    <div class="container">
+        <h2>My Profile</h2>
+        <div class="profile-row"><span class="profile-label">Name:</span> <span class="profile-value" id="profile-name"></span></div>
+        <div class="profile-row"><span class="profile-label">Email:</span> <span class="profile-value" id="profile-email"></span></div>
+        <div class="profile-row"><span class="profile-label">Phone:</span> <span class="profile-value" id="profile-phone"></span></div>
+        <!-- Add more fields as needed -->
+        <button class="logout-btn" id="logout-btn">Sign Out</button>
+    </div>
+</body>
+</html>
