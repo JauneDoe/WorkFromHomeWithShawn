@@ -98,7 +98,46 @@
         }
     </style>
     <script>
-        // Add any necessary JavaScript here
+document.addEventListener('DOMContentLoaded', function() {
+    // Update the authentication links based on the user's sign-in status
+    function updateAuthLinks() {
+        const signInLink = document.getElementById('nav-signin-link');
+        const signOutLink = document.getElementById('nav-signout-link');
+        let isSignedIn = false;
+        if (window.firebaseAuth) {
+            isSignedIn = !!window.firebaseAuth.currentUser;
+        } else if (localStorage.getItem('signedIn') === 'true') {
+            isSignedIn = true;
+        }
+        if (isSignedIn) {
+            if (signInLink) signInLink.style.display = 'none';
+            if (signOutLink) signOutLink.style.display = 'inline-block';
+        } else {
+            if (signInLink) signInLink.style.display = 'inline-block';
+            if (signOutLink) signOutLink.style.display = 'none';
+        }
+    }
+    updateAuthLinks();
+    if (window.firebaseAuthFunctions && window.firebaseAuth) {
+        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, updateAuthLinks);
+    }
+    const signOutLink = document.getElementById('nav-signout-link');
+    if (signOutLink) {
+        signOutLink.onclick = function(e) {
+            e.preventDefault();
+            if (window.firebaseAuthFunctions && window.firebaseAuth) {
+                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
+                    updateAuthLinks();
+                    window.location.href = "index.html";
+                });
+            } else {
+                localStorage.setItem('signedIn', 'false');
+                updateAuthLinks();
+                window.location.href = "index.html";
+            }
+        };
+    }
+});
     </script>
 </head>
 <body>
@@ -106,15 +145,16 @@
         <div class="logo">Work from Home with Shawn</div>
         <nav>
             <a href="index.html">Home</a>
-            <a href="jobs.html">Opportunities</a>
+            <a href="opportunities.html">Opportunities</a>
             <a href="dashboard.html" class="active">Dashboard</a>
             <a href="blog.html">Blog</a>
             <a href="faqs.html">FAQs</a>
             <a href="contact.html">Contact</a>
         </nav>
         <div class="auth-links">
-            <a href="signin.html">Sign in</a>
+            <a href="signin.html" id="nav-signin-link">Sign in</a>
             <a href="post-job.html">Post an Opportunity</a>
+            <a href="#" id="nav-signout-link" style="display:none;">Sign out</a>
         </div>
     </header>
     <div class="main-bg">
