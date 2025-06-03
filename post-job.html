@@ -6,7 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%); color: #222; }
-        header, footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 4px 24px #0002; }
+        header { display: flex; align-items: center; padding: 24px 48px;
+            background: #fff; box-shadow: 0 4px 24px #0002; position: sticky; top: 0; z-index: 10;
+        }
+        .logo { font-size: 1.5em; font-weight: bold; color: #7a684a; } /* Adjusted for consistency */
+        nav { margin-left: 40px; } /* Added for consistency */
+        nav a { margin: 0 10px; text-decoration: none; color: #7a684a; }
+        .auth-links { margin-left: auto; display: flex; align-items: center; }
+        .auth-links > a { margin-left: 24px; color: #7a684a; text-decoration: none; font-weight: 500; font-size: 1.05em; }
+        .active { font-weight: bold; color: #e6c77d; border-bottom: 2px solid #e6c77d; padding-bottom: 4px;} /* Adjusted for consistency */
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown { position: relative; display: inline-block; margin-left: 20px; }
+        .profile-icon-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--button-brown); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: bold; cursor: pointer; border: 1px solid var(--accent-gold); }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: #fff; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 101; border-radius: 4px; margin-top: 5px; }
+        .dropdown-content a { color: #222; padding: 12px 16px; text-decoration: none; display: block; font-size: 0.95em; margin-left: 0; font-weight: normal; }
+        .dropdown-content a:hover { background-color: #eaf0fa; color: #7a684a; }
+        .profile-dropdown:hover .dropdown-content,
+        .profile-dropdown .profile-icon-avatar:focus + .dropdown-content,
+        .profile-dropdown .dropdown-content:hover { display: block; }
+        .profile-icon-avatar:focus { outline: 2px solid var(--accent-gold); }
         .container { max-width: 600px; margin: auto; padding: 20px; background: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 2px 8px #0001; }
         h1 { color: #7a684a; margin-bottom: 20px; }
         form { display: flex; flex-direction: column; gap: 15px; }
@@ -16,11 +35,7 @@
         }
         textarea { resize: vertical; }
         .submit-btn { background: #e6c77d; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-size: 1em; }
-        .logo { font-size: 1.5em; font-weight: bold; color: #7a684a; }
-        nav { margin: 10px 0; }
-        nav a { margin: 0 10px; text-decoration: none; color: #7a684a; }
-        .auth-links a { margin: 0 10px; text-decoration: none; color: #7a684a; }
-        .active { font-weight: bold; color: #e6c77d; }
+        footer { text-align: center; padding: 20px; background: #fff; box-shadow: 0 -2px 8px #0001; }
     </style>
 </head>
 <body>
@@ -28,16 +43,22 @@
     <div class="logo">Work from Home with Shawn</div>
     <nav>
         <a href="index.html">Home</a>
-        <a href="jobs.html">Opportunities</a>
-        <a href="dashboard.html">Dashboard</a>
+        <a href="opportunities.html">Opportunities</a>
         <a href="blog.html">Blog</a>
         <a href="faqs.html">FAQs</a>
         <a href="contact.html">Contact</a>
     </nav>
     <div class="auth-links">
         <a href="signin.html" id="nav-signin-link">Sign in</a>
-        <a href="post-job.html" class="active" id="nav-post-job-link">Post an Opportunity</a>
-        <a href="#" id="nav-signout-link" style="display:none;">Sign out</a>
+        <a href="post-job.html" class="active" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+        <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
+            <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
+            <div class="dropdown-content">
+                <a href="profile.html">Profile</a>
+                <a href="edit-profile.html">Edit Profile</a>
+                <a href="#" id="dropdown-signout-link">Sign Out</a>
+            </div>
+        </div>
     </div>
 </header>
 <div class="container" id="postJobContainer">
@@ -73,55 +94,68 @@
 </div>
 <footer>&copy; 2024 Work from Home with Shawn</footer>
 <script>
-// --- Auth Links Show/Hide Logic ---
+// Firebase SDK imports should be here if not globally available via index.html's setup
+// For this example, assuming index.html makes them available on `window` object.
 document.addEventListener('DOMContentLoaded', function() {
-    function updateAuthLinks() {
+    function updateAuthDisplay(user, userData = {}) {
         const signInLink = document.getElementById('nav-signin-link');
-        const signOutLink = document.getElementById('nav-signout-link');
-        let isSignedIn = false;
-        if (window.firebaseAuth) {
-            isSignedIn = !!window.firebaseAuth.currentUser;
-        } else if (localStorage.getItem('signedIn') === 'true') {
-            isSignedIn = true;
-        }
-        if (isSignedIn) {
+        const postJobLink = document.getElementById('nav-post-job-link');
+        const profileDropdownContainer = document.getElementById('profile-dropdown-container');
+        const headerProfileAvatar = document.getElementById('header-profile-avatar');
+        const postJobContainer = document.getElementById('postJobContainer');
+
+        if (user) {
             if (signInLink) signInLink.style.display = 'none';
-            if (signOutLink) signOutLink.style.display = 'inline-block';
-        } else {
-            if (signInLink) signInLink.style.display = 'inline-block';
-            if (signOutLink) signOutLink.style.display = 'none';
-        }
-    }
-    updateAuthLinks();
-    if (window.firebaseAuthFunctions && window.firebaseAuth) {
-        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, updateAuthLinks);
-    }
-    const signOutLink = document.getElementById('nav-signout-link');
-    if (signOutLink) {
-        signOutLink.onclick = function(e) {
-            e.preventDefault();
-            if (window.firebaseAuthFunctions && window.firebaseAuth) {
-                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
-                    updateAuthLinks();
-                    window.location.href = "index.html";
-                });
-            } else {
-                localStorage.setItem('signedIn', 'false');
-                updateAuthLinks();
-                window.location.href = "index.html";
+            if (postJobLink) {
+                // User must be 'client' to see "Post an Opportunity" and access the form
+                const canPost = userData.accountType === 'client';
+                postJobLink.style.display = canPost ? 'inline-block' : 'none';
+                if (!canPost && postJobContainer) { // If not client, redirect or hide form
+                     window.location.href = "profile.html"; // Or show an error message
+                }
             }
-        };
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+            if (headerProfileAvatar) {
+                const displayName = userData.displayName || user.displayName || "U";
+                headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+            }
+        } else { // Not signed in
+            if (signInLink) signInLink.style.display = 'inline-block';
+            if (postJobLink) postJobLink.style.display = 'none';
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
+            if (postJobContainer) window.location.href = "signin.html"; // Redirect to signin if trying to access post-job
+        }
     }
 
-    // --- Restrict Access: Only allow if signed in ---
-    let isSignedIn = false;
-    if (window.firebaseAuth) {
-        isSignedIn = !!window.firebaseAuth.currentUser;
-    } else if (localStorage.getItem('signedIn') === 'true') {
-        isSignedIn = true;
-    }
-    if (!isSignedIn) {
-        window.location.href = "signin.html";
+    if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
+        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
+            if (user) {
+                const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
+                const userDoc = await window.firebaseFirestoreFunctions.getDoc(userDocRef);
+                const userData = userDoc.exists() ? userDoc.data() : {};
+                updateAuthDisplay(user, userData);
+            } else {
+                updateAuthDisplay(null); // This will trigger redirection if on post-job page
+            }
+        });
+
+        const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
+        if (dropdownSignOutLink) {
+            dropdownSignOutLink.onclick = function(e) {
+                e.preventDefault();
+                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
+                    // onAuthStateChanged will handle redirect
+                });
+            };
+        }
+    } else {
+         console.warn("Firebase auth object not found. Page access and auth links might not work correctly.");
+         // Fallback: if no Firebase, redirect to sign-in immediately as this page requires auth
+         if (! (localStorage.getItem('signedIn') === 'true' && JSON.parse(localStorage.getItem('userData') || '{}').accountType === 'client') ) {
+            window.location.href = "signin.html";
+         } else {
+            updateAuthDisplay({displayName: 'User'}, JSON.parse(localStorage.getItem('userData') || '{}'));
+         }
     }
 });
 </script>

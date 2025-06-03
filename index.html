@@ -24,8 +24,61 @@
         nav { margin-left: 40px; }
         nav a { margin: 0 18px; text-decoration: none; color: var(--text-black); font-weight: 500; font-size: 1.08em; transition: color 0.2s; }
         nav a.active, nav a:hover { color: var(--button-brown); border-bottom: 2px solid var(--accent-gold); padding-bottom: 4px; }
-        .auth-links { margin-left: auto; }
-        .auth-links a { margin-left: 24px; color: var(--button-brown); text-decoration: none; font-weight: 500; font-size: 1.05em; }
+        .auth-links { margin-left: auto; display: flex; align-items: center; }
+        .auth-links > a { margin-left: 24px; color: var(--button-brown); text-decoration: none; font-weight: 500; font-size: 1.05em; }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+            margin-left: 20px;
+        }
+        .profile-icon-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--button-brown);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid var(--accent-gold);
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: var(--white);
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 101; /* Ensure it's above other content */
+            border-radius: 4px;
+            margin-top: 5px; /* Space between icon and dropdown */
+        }
+        .dropdown-content a {
+            color: var(--text-black);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 0.95em;
+            margin-left: 0; /* Reset margin for dropdown links */
+            font-weight: normal;
+        }
+        .dropdown-content a:hover {
+            background-color: var(--soft-blue);
+            color: var(--button-brown);
+        }
+        .profile-dropdown:hover .dropdown-content,
+        .profile-dropdown .profile-icon-avatar:focus + .dropdown-content, /* For accessibility */
+        .profile-dropdown .dropdown-content:hover { /* Keep open when hovering content */
+            display: block;
+        }
+        .profile-icon-avatar:focus { /* Accessibility */
+            outline: 2px solid var(--accent-gold);
+        }
 
         .hero {
             display: flex; flex-direction: row; align-items: center; justify-content: center;
@@ -232,8 +285,8 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -247,6 +300,15 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Make auth and db globally available for other scripts if needed, or pass them
+        window.firebaseAuth = auth;
+        window.firebaseDB = db;
+        window.firebaseAuthFunctions = { onAuthStateChanged, signOut };
+        window.firebaseFirestoreFunctions = { doc, getDoc };
+
     </script>
 </head>
 <body>
@@ -255,15 +317,22 @@
         <nav>
             <a href="index.html" class="active">Home</a>
             <a href="opportunities.html">Opportunities</a>
-            <a href="dashboard.html">Dashboard</a>
             <a href="blog.html">Blog</a>
             <a href="faqs.html">FAQs</a>
             <a href="contact.html">Contact</a>
         </nav>
         <div class="auth-links">
             <a href="signin.html" id="nav-signin-link">Sign in</a>
-            <a href="post-job.html">Post an Opportunity</a>
-            <a href="#" id="nav-signout-link" style="display:none;">Sign out</a>
+            <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+            <!-- Profile Icon Dropdown -->
+            <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
+                <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
+                <div class="dropdown-content">
+                    <a href="profile.html">Profile</a>
+                    <a href="edit-profile.html">Edit Profile</a>
+                    <a href="#" id="dropdown-signout-link">Sign Out</a>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -518,47 +587,58 @@
     </script>
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // ...existing code...
-    function updateAuthLinks() {
+    function updateAuthDisplay(user, userData = {}) {
         const signInLink = document.getElementById('nav-signin-link');
-        const signOutLink = document.getElementById('nav-signout-link');
-        // Use Firebase Auth if available, else fallback to localStorage for demo
-        let isSignedIn = false;
-        if (window.firebaseAuth) {
-            isSignedIn = !!window.firebaseAuth.currentUser;
-        } else if (localStorage.getItem('signedIn') === 'true') {
-            isSignedIn = true;
-        }
-        if (isSignedIn) {
+        const postJobLink = document.getElementById('nav-post-job-link');
+        const profileDropdownContainer = document.getElementById('profile-dropdown-container');
+        const headerProfileAvatar = document.getElementById('header-profile-avatar');
+
+        if (user) {
             if (signInLink) signInLink.style.display = 'none';
-            if (signOutLink) signOutLink.style.display = 'inline-block';
+            if (postJobLink) {
+                postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
+            }
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+            if (headerProfileAvatar) {
+                const displayName = userData.displayName || user.displayName || "U";
+                headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+            }
         } else {
             if (signInLink) signInLink.style.display = 'inline-block';
-            if (signOutLink) signOutLink.style.display = 'none';
+            if (postJobLink) postJobLink.style.display = 'none'; // Hide if not signed in
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
         }
     }
-    // Call on load
-    updateAuthLinks();
-    // If using Firebase, listen for auth state changes
-    if (window.firebaseAuthFunctions && window.firebaseAuth) {
-        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, updateAuthLinks);
-    }
-    // Sign out handler
-    const signOutLink = document.getElementById('nav-signout-link');
-    if (signOutLink) {
-        signOutLink.onclick = function(e) {
-            e.preventDefault();
-            if (window.firebaseAuthFunctions && window.firebaseAuth) {
-                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
-                    updateAuthLinks();
-                    window.location.href = "index.html";
-                });
+
+    if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
+        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
+            if (user) {
+                const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
+                const userDoc = await window.firebaseFirestoreFunctions.getDoc(userDocRef);
+                const userData = userDoc.exists() ? userDoc.data() : {};
+                updateAuthDisplay(user, userData);
             } else {
-                localStorage.setItem('signedIn', 'false');
-                updateAuthLinks();
-                window.location.href = "index.html";
+                updateAuthDisplay(null);
             }
-        };
+        });
+
+        const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
+        if (dropdownSignOutLink) {
+            dropdownSignOutLink.onclick = function(e) {
+                e.preventDefault();
+                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
+                    window.location.href = "index.html";
+                }).catch(error => {
+                    console.error("Sign out error:", error);
+                });
+            };
+        }
+    } else {
+        // Fallback for pages without full Firebase script (basic show/hide based on localStorage)
+        const isSignedIn = localStorage.getItem('signedIn') === 'true';
+        updateAuthDisplay(isSignedIn ? { displayName: 'User' } : null, isSignedIn ? JSON.parse(localStorage.getItem('userData') || '{}') : {});
+        // Note: Fallback sign-out from dropdown would need separate handling if Firebase isn't loaded.
+        // For simplicity, assuming Firebase is loaded on pages with the dropdown.
     }
 });
 </script>
