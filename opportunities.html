@@ -275,17 +275,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle redirect after login
+    // --- Fix: Always check auth state on page load and after login ---
     function handleRedirectAfterLogin(user, userData) {
+        updateAuthDisplay(user, userData);
         const redirectPath = localStorage.getItem('redirectAfterLogin');
+        // Only redirect if we just logged in and are not already on the correct page
         if (redirectPath && window.location.pathname !== redirectPath) {
             localStorage.removeItem('redirectAfterLogin');
             window.location.href = redirectPath;
-        } else {
-            updateAuthDisplay(user, userData);
         }
     }
 
+    // --- Firebase Auth handling ---
     if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
         window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
             if (user) {
@@ -298,14 +299,25 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     } else {
-        // Fallback for non-Firebase (localStorage)
-        const signedIn = localStorage.getItem('signedIn') === 'true';
-        if (signedIn) {
-            // Simulate a client account for demo
-            handleRedirectAfterLogin({displayName: "User", email: "user@email.com"}, {accountType: "client", displayName: "User", email: "user@email.com"});
-        } else {
-            updateAuthDisplay(null);
+        // --- Fallback for non-Firebase (localStorage) ---
+        function checkLocalAuth() {
+            const signedIn = localStorage.getItem('signedIn') === 'true';
+            if (signedIn) {
+                // Simulate a client account for demo
+                handleRedirectAfterLogin(
+                    {displayName: "User", email: "user@email.com"},
+                    {accountType: "client", displayName: "User", email: "user@email.com"}
+                );
+            } else {
+                updateAuthDisplay(null);
+            }
         }
+        checkLocalAuth();
+
+        // Listen for storage changes (in case login happens in another tab)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'signedIn') checkLocalAuth();
+        });
     }
 
     // Profile dropdown sign out
