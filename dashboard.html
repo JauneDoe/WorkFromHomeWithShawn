@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sign In / Sign Up | Work from Home with Shawn</title>
+    <title>Dashboard | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
@@ -44,7 +44,7 @@
             padding: 40px 0;
         }
         .container {
-            max-width: 400px;
+            max-width: 800px;
             width: 100%;
             background: #fff;
             border-radius: 16px;
@@ -62,66 +62,34 @@
             font-size: 2em;
             font-weight: bold;
         }
-        form {
-            display: flex;
-            flex-direction: column;
+        .dashboard-content {
             width: 100%;
+            margin-top: 24px;
         }
-        label {
-            margin-bottom: 6px;
-            font-weight: 500;
+        .card {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px #0001;
+        }
+        .card h3 {
+            margin-top: 0;
             color: #7a684a;
+            font-size: 1.5em;
         }
-        input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
-            padding: 12px;
-            border: 1px solid #e6c77d;
-            border-radius: 6px;
-            margin-bottom: 18px;
-            font-size: 1.08em;
-            background: #fff;
-            color: #222;
-            transition: border 0.2s;
+        .card p {
+            margin: 8px 0;
+            color: #333;
         }
-        input:focus {
-            border-color: #7a684a;
-            outline: none;
-        }
-        button {
-            background: #7a684a;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 14px 0;
-            font-size: 1.08em;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px #0001;
-            transition: background 0.2s;
-        }
-        button:hover {
-            background: #5e513a;
-        }
-        .links {
-            text-align: center;
-            margin-top: 18px;
-        }
-        .links a {
-            color: #7a684a;
+        .card a {
             text-decoration: none;
-            margin: 0 8px;
-            font-size: 1em;
+            color: #7a684a;
             font-weight: 500;
-            cursor: pointer;
+            transition: color 0.2s;
         }
-        .links a:hover {
-            text-decoration: underline;
-        }
-        .error {
-            color: #d32f2f;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 1em;
+        .card a:hover {
+            color: #5e513a;
         }
         @media (max-width: 600px) {
             header { flex-direction: column; padding: 18px 10px; }
@@ -129,83 +97,8 @@
             .container { padding: 24px 8px; }
         }
     </style>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko",
-            authDomain: "workwithshawnauth.firebaseapp.com",
-            projectId: "workwithshawnauth",
-            storageBucket: "workwithshawnauth.firebasestorage.app",
-            messagingSenderId: "38163174001",
-            appId: "1:38163174001:web:45a352c8da0112bcfe41d0"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        window.onload = () => {
-            const form = document.getElementById('auth-form');
-            const errorDiv = document.getElementById('error-msg');
-            const toggle = document.getElementById('toggle-auth');
-            const displayNameGroup = document.getElementById('displayName-group');
-            const phoneGroup = document.getElementById('phone-group');
-            const formTitle = document.getElementById('form-title');
-            const submitBtn = document.getElementById('submit-btn');
-            let isSignUp = false;
-
-            function setFormMode(signUp) {
-                isSignUp = signUp;
-                formTitle.textContent = isSignUp ? 'Sign Up' : 'Sign In';
-                submitBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
-                toggle.textContent = isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up";
-                displayNameGroup.style.display = isSignUp ? 'block' : 'none';
-                phoneGroup.style.display = isSignUp ? 'block' : 'none';
-                errorDiv.textContent = '';
-            }
-            setFormMode(false);
-
-            toggle.onclick = (e) => {
-                e.preventDefault();
-                setFormMode(!isSignUp);
-            };
-
-            form.onsubmit = async (e) => {
-                e.preventDefault();
-                errorDiv.textContent = '';
-                const email = form.email.value.trim();
-                const password = form.password.value.trim();
-                if (isSignUp) {
-                    const displayName = form.displayName.value.trim();
-                    const phone = form.phone.value.trim();
-                    try {
-                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                        await updateProfile(userCredential.user, { displayName });
-                        const userDocRef = doc(db, "users", userCredential.user.uid);
-                        await setDoc(userDocRef, {
-                            email,
-                            displayName,
-                            phone,
-                            createdAt: serverTimestamp(),
-                            updatedAt: serverTimestamp(),
-                            role: "agent"
-                        }, { merge: true });
-                        window.location.href = "profile.html";
-                    } catch (err) {
-                        errorDiv.textContent = err.message.replace('Firebase: ', '');
-                    }
-                } else {
-                    try {
-                        await signInWithEmailAndPassword(auth, email, password);
-                        window.location.href = "profile.html";
-                    } catch (err) {
-                        errorDiv.textContent = err.message.replace('Firebase: ', '');
-                    }
-                }
-            };
-        };
+    <script>
+        // Add any necessary JavaScript here
     </script>
 </head>
 <body>
@@ -214,31 +107,35 @@
         <nav>
             <a href="index.html">Home</a>
             <a href="jobs.html">Jobs</a>
-            <a href="dashboard.html" class="active">Sign In</a>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="blog.html">Blog</a>
+            <a href="faqs.html">FAQs</a>
             <a href="contact.html">Contact</a>
         </nav>
+        <div class="auth-links">
+            <a href="dashboard.html">Sign in</a>
+            <a href="post-job.html">Post a Job</a>
+        </div>
     </header>
     <div class="main-bg">
         <div class="container">
-            <h2 id="form-title">Sign In</h2>
-            <div id="error-msg" class="error"></div>
-            <form id="auth-form" autocomplete="on">
-                <div id="displayName-group" style="display:none;">
-                    <label for="displayName">Full Name</label>
-                    <input type="text" id="displayName" name="displayName" autocomplete="name">
+            <h2>Dashboard</h2>
+            <div class="dashboard-content">
+                <div class="card">
+                    <h3>Welcome back, [User]!</h3>
+                    <p>Here you can manage your profile, view job applications, and more.</p>
+                    <a href="profile.html">View Profile</a>
                 </div>
-                <label for="email">Email address</label>
-                <input type="email" id="email" name="email" required autocomplete="email">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required autocomplete="current-password">
-                <div id="phone-group" style="display:none;">
-                    <label for="phone">Phone</label>
-                    <input type="tel" id="phone" name="phone" autocomplete="tel">
+                <div class="card">
+                    <h3>Job Applications</h3>
+                    <p>Keep track of your job applications and their statuses.</p>
+                    <a href="applications.html">View Applications</a>
                 </div>
-                <button type="submit" id="submit-btn">Sign In</button>
-            </form>
-            <div class="links">
-                <a href="#" id="toggle-auth">Don't have an account? Sign Up</a>
+                <div class="card">
+                    <h3>Post a New Job</h3>
+                    <p>Looking to hire? Post a new job listing here.</p>
+                    <a href="post-job.html">Post a Job</a>
+                </div>
             </div>
         </div>
     </div>

@@ -16,11 +16,28 @@
         }
         textarea { resize: vertical; }
         .submit-btn { background: #e6c77d; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-size: 1em; }
+        .logo { font-size: 1.5em; font-weight: bold; color: #7a684a; }
+        nav { margin: 10px 0; }
+        nav a { margin: 0 10px; text-decoration: none; color: #7a684a; }
+        .auth-links a { margin: 0 10px; text-decoration: none; color: #7a684a; }
+        .active { font-weight: bold; color: #e6c77d; }
     </style>
 </head>
 <body>
 <header>
-    <h1>Post a New Job</h1>
+    <div class="logo">Work from Home with Shawn</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="jobs.html">Jobs</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="blog.html">Blog</a>
+        <a href="faqs.html">FAQs</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+    <div class="auth-links">
+        <a href="dashboard.html">Sign in</a>
+        <a href="post-job.html" class="active">Post a Job</a>
+    </div>
 </header>
 <div class="container">
     <form action="post-a-new-job.html" method="POST">
