@@ -396,6 +396,14 @@
 
     // Auth display script (copied from index.html, ensure Firebase objects are available if needed)
 document.addEventListener('DOMContentLoaded', function() {
+    // Add redirectAfterLogin logic for Sign in link
+    const signInLink = document.getElementById('nav-signin-link');
+    if (signInLink) {
+        signInLink.addEventListener('click', function() {
+            localStorage.setItem('redirectAfterLogin', window.location.pathname);
+        });
+    }
+
     function updateAuthDisplay(user, userData = {}) {
         const signInLink = document.getElementById('nav-signin-link');
         const postJobLink = document.getElementById('nav-post-job-link');
