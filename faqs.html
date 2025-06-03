@@ -2,97 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>FAQs | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAQs - Work from Home with Shawn</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%); color: #222; margin: 0; }
+        header, footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 4px 24px #0002; }
+        .container { max-width: 800px; margin: 20px auto; background: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 20px; }
+        .faq-item { margin-bottom: 15px; }
+        .question { font-weight: bold; color: #7a684a; cursor: pointer; padding: 10px; border-bottom: 1px solid #e6c77d; }
+        .answer { display: none; padding: 10px; border-bottom: 1px solid #e6c77d; }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.question').forEach(q => {
+                q.addEventListener('click', () => {
+                    const ans = q.nextElementSibling;
+                    ans.style.display = ans.style.display === 'block' ? 'none' : 'block';
+                });
+            });
+        });
+    </script>
 </head>
 <body>
-    <header>
-        <div class="logo">Work from Home with Shawn</div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="jobs.html">Jobs</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="contact.html">Contact</a>
-        </nav>
-    </header>
-
-    <main>
-        <h1>Frequently Asked Questions</h1>
-        <section class="faq">
-            <h2>General Questions</h2>
-            <div class="faq-item">
-                <h3>What is Work from Home with Shawn?</h3>
-                <p>Work from Home with Shawn is a platform that connects you with legitimate work-from-home job opportunities.</p>
-            </div>
-            <div class="faq-item">
-                <h3>How does it work?</h3>
-                <p>We provide a curated list of job postings from various companies. You can browse the listings and apply for jobs that match your skills and interests.</p>
-            </div>
-            <div class="faq-item">
-                <h3>Is it free to use?</h3>
-                <p>Yes, our platform is completely free for job seekers. We do not charge any fees for accessing job listings or applying for jobs.</p>
-            </div>
-        </section>
-
-        <section class="faq">
-            <h2>Account and Dashboard</h2>
-            <div class="faq-item">
-                <h3>Do I need to create an account?</h3>
-                <p>Yes, creating an account allows you to save jobs, track applications, and access exclusive job postings.</p>
-            </div>
-            <div class="faq-item">
-                <h3>How do I create an account?</h3>
-                <p>You can create an account by clicking on the "Sign Up" button on our homepage and filling out the registration form.</p>
-            </div>
-            <div class="faq-item">
-                <h3>What if I forget my password?</h3>
-                <p>If you forget your password, click on the "Forgot Password?" link on the login page, and follow the instructions to reset it.</p>
-            </div>
-        </section>
-
-        <section class="faq">
-            <h2>Job Applications</h2>
-            <div class="faq-item">
-                <h3>How do I apply for a job?</h3>
-                <p>To apply for a job, click on the job listing to view the details, and then click the "Apply Now" button to submit your application.</p>
-            </div>
-            <div class="faq-item">
-                <h3>Can I apply for multiple jobs?</h3>
-                <p>Yes, you can apply for as many jobs as you like. We encourage you to apply for jobs that match your skills and interests.</p>
-            </div>
-            <div class="faq-item">
-                <h3>How will I know if my application was successful?</h3>
-                <p>We will notify you via email if your application is successful and if you have been selected for an interview.</p>
-            </div>
-        </section>
-
-        <section class="faq">
-            <h2>Contact and Support</h2>
-            <div class="faq-item">
-                <h3>How can I contact support?</h3>
-                <p>You can contact our support team by clicking on the "Contact Us" link in the footer and filling out the contact form.</p>
-            </div>
-            <div class="faq-item">
-                <h3>Where can I find more information?</h3>
-                <p>For more information, you can visit our blog, where we post articles and resources about working from home.</p>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="logo">Work from Home with Shawn</div>
-            <nav>
-                <a href="index.html">Home</a>
-                <a href="jobs.html">Jobs</a>
-                <a href="dashboard.html">Dashboard</a>
-                <a href="contact.html">Contact</a>
-            </nav>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2023 Work from Home with Shawn. All rights reserved.</p>
-        </div>
-    </footer>
+<header>
+    <h1>Frequently Asked Questions</h1>
+</header>
+<div class="container">
+    <div class="faq-item">
+        <div class="question">How do I create an account?</div>
+        <div class="answer">Click on "Sign Up" in the header, fill out your details, and submit. You'll get a confirmation email to verify your account.</div>
+    </div>
+    <div class="faq-item">
+        <div class="question">How do I apply for a job?</div>
+        <div class="answer">Browse the "Jobs" page, select a job, then click "Apply Now" on the job detail page to submit your application.</div>
+    </div>
+    <div class="faq-item">
+        <div class="question">How do I post a job?</div>
+        <div class="answer">After signing in as a client, go to your Dashboard and click "Post a New Job", fill in the form, and publish.</div>
+    </div>
+    <div class="faq-item">
+        <div class="question">Who can I contact for support?</div>
+        <div class="answer">Use the "Contact" page to send us a message, or email support@workathomewithshawn.com.</div>
+    </div>
+</div>
+<footer>&copy; 2024 Work from Home with Shawn</footer>
 </body>
 </html>

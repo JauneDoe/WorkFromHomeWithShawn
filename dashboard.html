@@ -1,30 +1,320 @@
-<!DOCTYPE html>
+<!DOCTYPE html> https://sites.google.com/view/workfromhomewithshawn/edit-profile
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Sign In | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Work from Home with Shawn</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary-bg: #f7f5f0;
+            --accent-gold: #e6c77d;
+            --button-brown: #7a684a;
+            --text-black: #222222;
+            --white: #ffffff;
+            --soft-blue: #eaf0fa;
+            --shadow: 0 4px 24px #0002;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(90deg, var(--accent-gold) 0%, var(--soft-blue) 100%);
+            color: var(--text-black);
+            min-height: 100vh;
+        }
+        header {
+            position: sticky; top: 0; z-index: 10;
+            display: flex; align-items: center; padding: 24px 48px;
+            background: var(--white); box-shadow: var(--shadow);
+        }
+        .logo {
+            font-size: 2.2em; font-weight: bold; color: var(--button-brown); letter-spacing: 1px;
+        }
+        nav { margin-left: 40px; }
+        nav a {
+            margin: 0 18px; text-decoration: none; color: var(--text-black);
+            font-weight: 500; font-size: 1.08em; transition: color 0.2s;
+        }
+        nav a.active, nav a:hover {
+            color: var(--button-brown); border-bottom: 2px solid var(--accent-gold); padding-bottom: 4px;
+        }
+        .main-bg {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 40px 32px 32px 32px;
+            margin: 40px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            color: var(--button-brown);
+            font-size: 2em;
+            font-weight: bold;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        label {
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--button-brown);
+        }
+        input[type="email"], input[type="password"], input[type="text"] {
+            padding: 12px;
+            border: 1px solid var(--accent-gold);
+            border-radius: 6px;
+            margin-bottom: 18px;
+            font-size: 1.08em;
+            background: var(--white);
+            color: var(--text-black);
+            transition: border 0.2s;
+        }
+        input:focus {
+            border-color: var(--button-brown);
+            outline: none;
+        }
+        .ssn-ein-note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: -12px;
+            margin-bottom: 18px;
+        }
+        button {
+            background: var(--button-brown);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            padding: 14px 0;
+            font-size: 1.08em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px #0001;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #5e513a;
+        }
+        .alt-signin {
+            text-align: center;
+            margin: 18px 0 10px 0;
+            color: #888;
+            font-size: 1em;
+        }
+        .oauth-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--white);
+            color: var(--button-brown);
+            border: 1px solid var(--accent-gold);
+            border-radius: 6px;
+            padding: 12px 0;
+            margin-bottom: 10px;
+            font-size: 1.08em;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            box-shadow: 0 2px 8px #0001;
+            transition: border 0.2s;
+        }
+        .oauth-btn:hover {
+            border-color: var(--button-brown);
+        }
+        .oauth-btn img {
+            width: 22px;
+            margin-right: 12px;
+        }
+        .links {
+            text-align: center;
+            margin-top: 18px;
+        }
+        .links a {
+            color: var(--button-brown);
+            text-decoration: none;
+            margin: 0 8px;
+            font-size: 1em;
+            font-weight: 500;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: #d32f2f;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        @media (max-width: 600px) {
+            header { flex-direction: column; padding: 18px 10px; }
+            .main-bg { padding: 10px 0; }
+            .container { padding: 24px 8px; }
+        }
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            GoogleAuthProvider,
+            signInWithPopup
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko",
+            authDomain: "workwithshawnauth.firebaseapp.com",
+            projectId: "workwithshawnauth",
+            storageBucket: "workwithshawnauth.firebasestorage.app",
+            messagingSenderId: "38163174001",
+            appId: "1:38163174001:web:45a352c8da0112bcfe41d0"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.onload = () => {
+            const form = document.getElementById('auth-form');
+            const toggle = document.getElementById('toggle-auth');
+            const googleBtn = document.getElementById('google-signin');
+            const errorDiv = document.getElementById('error-msg');
+            let isSignUp = false;
+
+            toggle.onclick = (e) => {
+                e.preventDefault();
+                isSignUp = !isSignUp;
+                document.getElementById('form-title').textContent = isSignUp ? 'Sign Up' : 'Sign In';
+                document.getElementById('submit-btn').textContent = isSignUp ? 'Sign Up' : 'Sign In';
+                toggle.textContent = isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up";
+                // Show/hide the SSN/EIN field only during Sign Up
+                document.getElementById('ssnEinGroup').style.display = isSignUp ? 'block' : 'none';
+            };
+
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                errorDiv.textContent = '';
+
+                const email = form.email.value.trim();
+                const password = form.password.value.trim();
+                const ssnEinValue = form.ssnEin.value.trim();
+
+                // SSN/EIN update logic for profile edit
+                // SSN pattern: XXX-XX-XXXX
+                const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
+                // EIN pattern: XX-XXXXXXX
+                const einRegex = /^\d{2}-\d{7}$/;
+                let accountType = null;
+
+                if (ssnEinValue) {
+                    if (ssnRegex.test(ssnEinValue)) {
+                        accountType = 'agent';
+                    } else if (einRegex.test(ssnEinValue)) {
+                        accountType = 'client';
+                    } else {
+                        errorDiv.textContent = 'Please enter a valid SSN (XXX-XX-XXXX) or EIN (XX-XXXXXXX).';
+                        return;
+                    }
+                }
+
+                try {
+                    // Assume user is already signed in for profile edit
+                    const user = auth.currentUser;
+                    if (!user) {
+                        errorDiv.textContent = 'You must be signed in to update your profile.';
+                        return;
+                    }
+                    // Update Firestore with new accountType if changed
+                    if (accountType) {
+                        const userDocRef = doc(db, "users", user.uid);
+                        await updateDoc(userDocRef, {
+                            accountType: accountType,
+                            ssnEin: ssnEinValue
+                        });
+                    }
+                    errorDiv.style.color = 'green';
+                    errorDiv.textContent = 'Profile updated successfully!';
+                    setTimeout(() => {
+                        errorDiv.style.color = '#d32f2f';
+                        errorDiv.textContent = '';
+                    }, 4000);
+                } catch (err) {
+                    errorDiv.textContent = err.message.replace('Firebase: ', '');
+                }
+            };
+
+            googleBtn.onclick = async (e) => {
+                e.preventDefault();
+                errorDiv.textContent = '';
+                const provider = new GoogleAuthProvider();
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    // If Google Sign‐in for new user, you may prompt them for SSN/EIN separately or default to client/agent
+                    window.location.href = "WorkWithShawnhomepage.html";
+                } catch (err) {
+                    errorDiv.textContent = err.message.replace('Firebase: ', '');
+                }
+            };
+        };
+    </script>
 </head>
 <body>
     <header>
         <div class="logo">Work from Home with Shawn</div>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="jobs.html">Jobs</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="contact.html">Contact</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/home">Home</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/jobs-listing-page">Jobs</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/home#how-it-works">How it Works</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/home#about">About</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/contact-support-page">Contact</a>
         </nav>
+        <div class="auth-links">
+            <a href="https://sites.google.com/view/workfromhomewithshawn/sign-in-sign-up">Sign in</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/post-a-new-job">Post a Job</a>
+        </div>
     </header>
+    <div class="main-bg">
+        <div class="container">
+            <h2 id="form-title">Sign In</h2>
+            <div id="error-msg" class="error"></div>
+            <button class="oauth-btn" id="google-signin">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"> Continue with Google
+            </button>
+            <div class="alt-signin">or</div>
+            <form id="auth-form" autocomplete="on">
+                <label for="email">Email address</label>
+                <input type="email" id="email" name="email" required autocomplete="email">
+                
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
 
-    <main>
-        <h1>Welcome to Your Dashboard</h1>
-        <p>Here you can find personalized content and recommendations.</p>
-        <!-- Add more dashboard-specific content here -->
-    </main>
+                <!-- SSN/EIN field only shown during Sign-Up -->
+                <div id="ssnEinGroup" style="display:none;">
+                    <label for="ssnEin">SSN or EIN</label>
+                    <input type="text" id="ssnEin" name="ssnEin" placeholder="SSN: XXX-XX-XXXX or EIN: XX-XXXXXXX">
+                    <div class="ssn-ein-note">Enter the nine-digit number with hyphens to determine your account type.</div>
+                </div>
 
-    <footer>
-        <p>&copy; 2023 Work from Home with Shawn. All rights reserved.</p>
-    </footer>
+                <button type="submit" id="submit-btn">Sign In</button>
+            </form>
+            <div class="links">
+                <a href="#" id="toggle-auth">Don't have an account? Sign Up</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

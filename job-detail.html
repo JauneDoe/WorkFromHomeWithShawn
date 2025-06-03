@@ -2,36 +2,147 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Job Detail | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Detail - Work from Home with Shawn</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --soft-blue: #f0f4ff;
+            --button-brown: #7a684a;
+            --accent-gold: #e6c77d;
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%); color: #222; }
+        header, footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 4px 24px #0002; }
+        .container { max-width: 800px; margin: auto; padding: 20px; }
+        .job-detail { 
+            background: rgba(255,255,255,0.9); 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px #0001; 
+        }
+        .job-header { /* Added for title and apply button */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Responsive */
+        }
+        .job-title { font-size: 2em; color: #7a684a; margin-bottom: 0; /* Adjusted margin */ }
+        .company-info, .job-description, .job-requirements, .job-key-info { margin-bottom: 20px; }
+        
+        .job-layout { /* Added for two-column layout */
+            display: flex;
+            gap: 30px;
+        }
+        .job-main-content { /* For description, requirements */
+            flex: 2;
+        }
+        .job-sidebar { /* For key info, company */
+            flex: 1;
+            background-color: var(--soft-blue);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .job-sidebar h3 {
+            color: var(--button-brown);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        .job-sidebar p, .job-sidebar ul {
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+        .job-sidebar ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .job-sidebar ul li strong {
+            color: var(--button-brown);
+        }
+
+        .apply-btn { 
+            background: #e6c77d; 
+            border: none; 
+            padding: 12px 25px; /* Increased padding */
+            border-radius: 6px; /* Slightly more rounded */
+            cursor: pointer; 
+            font-size: 1.1em; /* Increased font size */
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+        .apply-btn:hover {
+            background-color: #d4b05c; /* Darker gold on hover */
+        }
+        .share-section { margin-top: 20px; }
+        .share-btn { /* Basic style for share buttons */
+            margin-right: 8px; text-decoration: none; color: var(--button-brown);
+            padding: 5px 8px; border: 1px solid var(--accent-gold); border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="logo">Work from Home with Shawn</div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="jobs.html">Jobs</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="contact.html">Contact</a>
-        </nav>
-    </header>
+<header>
+    <h1>Job Detail</h1>
+</header>
+<div class="container">
+    <div class="job-detail">
+        <div class="job-header">
+            <div class="job-title">Customer Support Specialist</div>
+            <button class="apply-btn" onclick="window.location.href='https://sites.google.com/view/workfromhomewithshawn/application-submission-page'">Apply Now</button>
+        </div>
 
-    <main>
-        <section class="job-detail">
-            <h1>Job Title</h1>
-            <p class="company">Company Name</p>
-            <p class="location">Location</p>
-            <p class="salary">Salary</p>
-            <p class="description">
-                Job description goes here. This is a detailed description of the job, including responsibilities, requirements, and any other relevant information.
-            </p>
-            <button class="apply">Apply Now</button>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2023 Work from Home with Shawn. All rights reserved.</p>
-    </footer>
+        <div class="job-layout">
+            <div class="job-main-content">
+                <div class="job-description">
+                    <h3>Job Description</h3>
+                    <p>Provide exceptional customer support via phone, chat, and email. Handle customer inquiries, complaints, billing questions, and payment extensions/service requests.</p>
+                    {/* Add more description paragraphs as needed */}
+                </div>
+                <div class="job-requirements">
+                    <h3>Requirements</h3>
+                    <ul>
+                        <li>Excellent communication skills.</li>
+                        <li>Minimum 1-year experience in customer service.</li>
+                        <li>Reliable internet connection.</li>
+                        <li>Proficiency with CRM software.</li>
+                        <li>Ability to work flexible hours, including weekends if needed.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="job-sidebar">
+                <h3>Job Overview</h3>
+                <ul>
+                    <li><strong>Company:</strong> Acme Corp</li>
+                    <li><strong>Location:</strong> Remote, USA</li>
+                    <li><strong>Job Type:</strong> Full-Time</li>
+                    <li><strong>Pay:</strong> $15/hr</li>
+                    <li><strong>Posted:</strong> 3 days ago</li> {/* Example */}
+                </ul>
+                <h3>Company Details</h3>
+                <p>Acme Corp is a leading provider of innovative solutions, committed to customer satisfaction and employee growth.</p>
+                <a href="#" style="color:var(--button-brown);">Visit Company Website</a>
+            </div>
+        </div>
+        
+        <div class="share-section">
+            <strong>Share this job:</strong>
+            <a href="#" class="share-btn">Facebook</a>
+            <a href="#" class="share-btn">Twitter</a>
+            <a href="#" class="share-btn">LinkedIn</a>
+            <button class="share-btn" style="cursor:pointer;" onclick="copyJobLink()">Copy Link</button>
+        </div>
+        {/* Optionally, add a "Related Jobs" section here */}
+    </div>
+</div>
+<footer>&copy; 2024 Work from Home with Shawn</footer>
+<script>
+function copyJobLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('Job link copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
 </body>
 </html>

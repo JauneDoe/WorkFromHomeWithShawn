@@ -2,26 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Inbox | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work from Home with Shawn</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%); color: #222; margin: 0; }
+        header, footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 4px 24px #0002; }
+        .container { display: flex; max-width: 1000px; margin: 20px auto; background: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+        .sidebar { width: 250px; border-right: 1px solid #e6c77d; }
+        .sidebar h2 { margin: 0; padding: 15px; background: #7a684a; color: #fff; border-radius: 8px 8px 0 0; }
+        .conversation-list { list-style: none; margin: 0; padding: 0; }
+        .conversation-item { padding: 12px 15px; border-bottom: 1px solid #e6c77d; cursor: pointer; }
+        .conversation-item:hover { background: #eaf0fa; }
+        .chat-window { flex: 1; display: flex; flex-direction: column; }
+        .messages { flex: 1; padding: 15px; overflow-y: auto; }
+        .message { margin-bottom: 15px; max-width: 70%; padding: 10px 14px; border-radius: 8px; }
+        .message.sent { background: #e6c77d; align-self: flex-end; color: #222; }
+        .message.received { background: #fff; align-self: flex-start; border: 1px solid #e6c77d; }
+        .message-input { display: flex; border-top: 1px solid #e6c77d; }
+        .message-input input { flex: 1; border: none; padding: 15px; font-size: 1em; }
+        .message-input button { background: #7a684a; color: #fff; border: none; padding: 0 20px; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="logo">Work from Home with Shawn</div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="jobs.html">Jobs</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="contact.html">Contact</a>
-        </nav>
-    </header>
-    <main>
-        <h1>Welcome to Work from Home with Shawn</h1>
-        <p>Your one-stop solution for finding legitimate work from home jobs.</p>
-    </main>
-    <footer>
-        <p>&copy; 2023 Work from Home with Shawn. All rights reserved.</p>
-    </footer>
+<header>
+    <h1>Inbox</h1>
+</header>
+<div class="container">
+    <div class="sidebar">
+        <h2>Conversations</h2>
+        <ul class="conversation-list">
+            <li class="conversation-item">Jordan Smith</li>
+            <li class="conversation-item">Alex Johnson</li>
+            <li class="conversation-item">Priya Sharma</li>
+        </ul>
+    </div>
+    <div class="chat-window">
+        <div class="messages">
+            <div class="message received">Hi Shawn, I wanted to ask about the role...</div>
+            <div class="message sent">Sure, happy to help! What would you like to know?</div>
+        </div>
+        <div class="message-input">
+            <input type="text" placeholder="Type a message...">
+            <button>Send</button>
+        </div>
+    </div>
+</div>
+<footer>&copy; 2024 Work from Home with Shawn</footer>
 </body>
 </html>
