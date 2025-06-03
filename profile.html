@@ -1,108 +1,498 @@
-<!DOCTYPE html>
+<!DOCTYPE html> https://sites.google.com/view/workfromhomewithshawn/profile
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Profile | Work from Home with Shawn</title>
+    <title>Profile Dashboard | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Copy your site's CSS here or link to your main stylesheet -->
     <style>
-        /* ...copy your main styles here for header, .container, etc... */
+        :root {
+            --primary-bg: #f7f5f0;
+            --accent-gold: #e6c77d;
+            --button-brown: #7a684a;
+            --text-black: #222222;
+            --white: #ffffff;
+            --soft-blue: #eaf0fa;
+            --shadow: 0 4px 24px #0002;
+        }
         body {
             margin: 0;
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%);
-            color: #222;
-            min-height: 100vh;
+            background: var(--primary-bg);
+            color: var(--text-black);
         }
         header {
             position: sticky; top: 0; z-index: 10;
             display: flex; align-items: center; padding: 24px 48px;
-            background: #fff; box-shadow: 0 4px 24px #0002;
+            background: var(--white); box-shadow: var(--shadow);
         }
-        .logo { font-size: 2.2em; font-weight: bold; color: #7a684a; letter-spacing: 1px; }
+        .logo {
+            font-size: 2.2em; font-weight: bold; color: var(--button-brown); letter-spacing: 1px;
+        }
         nav { margin-left: 40px; }
-        nav a { margin: 0 18px; text-decoration: none; color: #222; font-weight: 500; font-size: 1.08em; }
-        nav a.active, nav a:hover { color: #7a684a; border-bottom: 2px solid #e6c77d; padding-bottom: 4px; }
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
+        nav a {
+            margin: 0 18px; text-decoration: none; color: var(--text-black); font-weight: 500; font-size: 1.08em; transition: color 0.2s;
+        }
+        nav a.active, nav a:hover {
+            color: var(--button-brown); border-bottom: 2px solid var(--accent-gold); padding-bottom: 4px;
+        }
+        .auth-links { margin-left: auto; }
+        .auth-links a {
+            margin-left: 24px; color: var(--button-brown); text-decoration: none; font-weight: 500; font-size: 1.05em;
+        }
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 0 24px;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            margin-bottom: 32px;
+            background: var(--soft-blue);
+            border-radius: 14px;
+            padding: 32px 32px 28px 32px;
+        }
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--button-brown);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.7em;
+            font-weight: bold;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .profile-info {
+            flex: 1;
+        }
+        .profile-info h1 {
+            margin: 0 0 10px 0;
+            font-size: 2em;
+            color: var(--button-brown);
+        }
+        .profile-contact {
+            color: var(--text-black);
+            font-size: 1.08em;
+            margin-bottom: 4px;
+        }
+        .profile-contact i {
+            margin-right: 7px;
+            color: var(--accent-gold);
+        }
+        .profile-status {
+            background: #eaf7e6;
+            color: #2e7d32;
+            border-radius: 6px;
+            padding: 8px 16px;
+            margin: 18px 0 0 0;
+            display: inline-block;
+            font-size: 1em;
+        }
+        .profile-onboarding-progress {
+            margin-top: 10px;
+        }
+        .profile-onboarding-progress .progress-label {
+            font-size: 0.9em;
+            color: var(--text-black);
+            margin-bottom: 4px;
+        }
+        .progress-bar-container {
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background-color: var(--accent-gold);
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.5s ease-in-out;
+        }
+        .section-title {
+            font-size: 1.3em;
+            color: var(--button-brown);
+            margin-top: 40px;
+            margin-bottom: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+        .dashboard-card {
             background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px #0002;
-            padding: 40px 32px 32px 32px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #0001;
+            padding: 20px;
+            margin-bottom: 24px;
         }
-        h2 { color: #7a684a; }
-        .profile-row { margin-bottom: 18px; }
-        .profile-label { font-weight: bold; color: #7a684a; }
-        .profile-value { margin-left: 10px; }
-        .logout-btn {
-            background: #7a684a; color: #fff; border: none; border-radius: 6px; padding: 10px 24px; font-size: 1em; font-weight: 600; cursor: pointer;
+        .card-title {
+            font-size: 1.15em;
+            color: #7a684a;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
-        .logout-btn:hover { background: #5e513a; }
+        .manage-btn {
+            background: #e6c77d;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .manage-btn:hover { background: #d4b05c; }
+        .job-list { list-style: none; padding: 0; margin: 0 0 10px 0; }
+        .job-list li { margin-bottom: 8px; }
+        .assignments-list {
+            background: transparent;
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+            width: 100%;
+        }
+        .assignment-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+            padding: 12px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+        .assignment-item:hover {
+            transform: translateY(-3px);
+        }
+        .assignment-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-gold);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        .assignment-details {
+            flex: 1;
+        }
+        .assignment-details .assignment-title {
+            font-weight: 600;
+            color: var(--button-brown);
+        }
+        .assignment-details .assignment-meta {
+            font-size: 0.97em;
+            color: #666;
+        }
+        .assignment-actions {
+            margin-left: auto;
+        }
+        .assignment-actions button {
+            background: var(--button-brown);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            padding: 8px 18px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0001;
+            transition: background 0.2s;
+        }
+        .assignment-actions button:hover {
+            background: #5e513a;
+        }
+        .earnings-section {
+            background: transparent;
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .earnings-title {
+            color: var(--button-brown);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .earnings-amount {
+            font-size: 1.7em;
+            color: var(--button-brown);
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .earnings-meta {
+            color: #666;
+            font-size: 1em;
+        }
+        .performance-section {
+            background: transparent;
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+            width: 100%;
+        }
+        .performance-title {
+            color: var(--button-brown);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .performance-metrics {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        .metric {
+            background: var(--white);
+            border-radius: 6px;
+            box-shadow: 0 2px 8px #0001;
+            padding: 12px 10px;
+            text-align: center;
+            margin-bottom: 10px;
+            flex-basis: 150px;
+            transition: transform 0.2s ease;
+        }
+        .metric:hover {
+             transform: scale(1.05);
+        }
+        .metric-icon {
+            font-size: 1.8em;
+            color: var(--accent-gold);
+            margin-bottom: 5px;
+        }
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 10px;
+        }
+        .action-card {
+            background: var(--white);
+            padding: 18px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            color: var(--button-brown);
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .action-card:hover {
+            background-color: var(--soft-blue);
+            transform: translateY(-3px);
+        }
+        .action-card i {
+            font-size: 1.5em;
+            display: block;
+            margin-bottom: 8px;
+        }
+        @media (max-width: 900px) {
+            main { padding: 24px 4vw 0 4vw; }
+            .profile-header { flex-direction: column; align-items: flex-start; padding: 24px 12px 18px 12px; }
+        }
+        @media (max-width: 700px) {
+            .profile-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .container { padding: 12px; }
+            .quick-actions-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            header { flex-direction: column; padding: 18px 10px; }
+            main { padding: 12px 2vw 0 2vw; }
+            .profile-header { padding: 16px 4px 12px 4px; }
+        }
     </style>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko",
-            authDomain: "workwithshawnauth.firebaseapp.com",
-            projectId: "workwithshawnauth",
-            storageBucket: "workwithshawnauth.firebasestorage.app",
-            messagingSenderId: "38163174001",
-            appId: "1:38163174001:web:45a352c8da0112bcfe41d0"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        window.onload = () => {
-            const nameEl = document.getElementById('profile-name');
-            const emailEl = document.getElementById('profile-email');
-            const phoneEl = document.getElementById('profile-phone');
-            const logoutBtn = document.getElementById('logout-btn');
-
-            onAuthStateChanged(auth, async (user) => {
-                if (!user) {
-                    window.location.href = "https://sites.google.com/view/workfromhomewithshawn/sign-in-sign-up";
-                    return;
-                }
-                nameEl.textContent = user.displayName || '';
-                emailEl.textContent = user.email || '';
-                // Fetch extra info from Firestore
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    const data = userDoc.data();
-                    phoneEl.textContent = data.phone || '';
-                    // Add more fields as needed
-                }
-            });
-
-            logoutBtn.onclick = async () => {
-                await signOut(auth);
-                window.location.href = "https://sites.google.com/view/workfromhomewithshawn/sign-in-sign-up";
-            };
-        };
-    </script>
 </head>
 <body>
     <header>
         <div class="logo">Work from Home with Shawn</div>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="jobs.html">Jobs</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="contact.html">Contact</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/home">Home</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/jobs-listing-page">Jobs</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/home#how-it-works">How it Works</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/home#about">About</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/contact-support-page">Contact</a>
         </nav>
+        <div class="auth-links">
+            <a href="https://sites.google.com/view/workfromhomewithshawn/sign-in-sign-up">Sign In</a>
+        </div>
     </header>
-    <div class="container">
-        <h2>My Profile</h2>
-        <div class="profile-row"><span class="profile-label">Name:</span> <span class="profile-value" id="profile-name"></span></div>
-        <div class="profile-row"><span class="profile-label">Email:</span> <span class="profile-value" id="profile-email"></span></div>
-        <div class="profile-row"><span class="profile-label">Phone:</span> <span class="profile-value" id="profile-phone"></span></div>
-        <!-- Add more fields as needed -->
-        <button class="logout-btn" id="logout-btn">Sign Out</button>
-    </div>
+    <main>
+        <!-- AGENT DASHBOARD -->
+        <div id="agent-dashboard">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profile-avatar">U</div>
+                <div class="profile-info">
+                    <h1 id="profile-name">User Name</h1>
+                    <div class="profile-contact"><i>📧</i> <span id="profile-email">user@example.com</span></div>
+                    <div class="profile-contact"><i>📞</i> <span id="profile-phone">(555) 555-5555</span></div>
+                    <div class="profile-contact"><i>📍</i> <span id="profile-location">Remote, World</span></div>
+                    <div class="profile-status">✔ Independent Contractor</div>
+                    <div class="profile-onboarding-progress">
+                        <div class="progress-label">Onboarding: Step 3 of 5</div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" id="onboardingProgressBar" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <button style="margin-top:16px;" onclick="window.location.href='https://sites.google.com/view/workfromhomewithshawn/edit-profile'">Edit Profile</button>
+                </div>
+            </div>
+            <div class="section-title">My Assignments</div>
+            <div class="assignments-list">
+                <div class="assignment-item">
+                    <div class="assignment-icon">CS</div>
+                    <div class="assignment-details">
+                        <div class="assignment-title">Customer Support - Acme Corp</div>
+                        <div class="assignment-meta">Active • 20 hrs/week • $15/hr</div>
+                    </div>
+                    <div class="assignment-actions">
+                        <button>View Details</button>
+                    </div>
+                </div>
+                <div class="assignment-item">
+                    <div class="assignment-icon">VA</div>
+                    <div class="assignment-details">
+                        <div class="assignment-title">Virtual Assistant - Bright Solutions</div>
+                        <div class="assignment-meta">Completed • 10 hrs/week • $17/hr</div>
+                    </div>
+                    <div class="assignment-actions">
+                        <button>View Report</button>
+                    </div>
+                </div>
+            </div>
+            <div class="section-title">News & Announcements</div>
+            <div style="background:var(--accent-gold);color:var(--text-black);padding:16px 20px;border-radius:8px;box-shadow:0 2px 8px #0001;margin-bottom:24px;">
+                <b>Update:</b> New onboarding requirements for all agents starting July 2024. <a href="#documents" style="color:var(--button-brown);text-decoration:underline;">Learn more</a>
+            </div>
+            <div class="section-title" id="documents">Documents & Resources</div>
+            <div style="background:var(--white);border-radius:8px;box-shadow:0 2px 8px #0001;padding:16px 20px;margin-bottom:24px;">
+                <ul style="margin:0;padding-left:18px;">
+                    <li><a href="https://sites.google.com/view/workfromhomewithshawn/agent-agreement" style="color:var(--button-brown);">Agent Agreement</a></li>
+                    <li><a href="https://sites.google.com/view/workfromhomewithshawn/tax-form" style="color:var(--button-brown);">Tax Form (W-9)</a></li>
+                    <li><a href="https://sites.google.com/view/workfromhomewithshawn/certification-guide" style="color:var(--button-brown);">Certification Guide</a></li>
+                </ul>
+            </div>
+            <div class="section-title">Need Help?</div>
+            <div style="background:var(--soft-blue);border-radius:8px;box-shadow:0 2px 8px #0001;padding:14px 18px;">
+                <a href="https://sites.google.com/view/workfromhomewithshawn/contact-support-page" style="color:var(--button-brown);font-weight:bold;text-decoration:underline;">Contact Support</a>
+            </div>
+            <div class="section-title">Earnings Summary</div>
+            <div class="earnings-section">
+                <div class="earnings-title">This Month</div>
+                <div class="earnings-amount">$1,200</div>
+                <div class="earnings-meta">Paid bi-weekly via direct deposit</div>
+            </div>
+            <div class="section-title">Performance</div>
+            <div class="performance-section">
+                <div class="performance-title">Key Metrics</div>
+                <div class="performance-metrics">
+                    <div class="metric">
+                        <div class="metric-icon">👍</div>
+                        <div class="metric-value">98%</div>
+                        <div class="metric-label">Attendance</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-icon">⭐</div>
+                        <div class="metric-value">4.8/5</div>
+                        <div class="metric-label">Client Rating</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-icon">💼</div>
+                        <div class="metric-value">3</div>
+                        <div class="metric-label">Active Assignments</div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-title">Quick Actions</div>
+            <div class="quick-actions-grid">
+                <a href="#" class="action-card"><i>📅</i> Update Availability</a>
+                <a href="#" class="action-card"><i>📄</i> View Paystubs</a>
+                <a href="https://sites.google.com/view/workfromhomewithshawn/contact-support-page" class="action-card"><i>❓</i> Request Support</a>
+            </div>
+        </div>
+
+        <!-- CLIENT DASHBOARD -->
+        <div id="client-dashboard" style="display:none;">
+            <div class="profile-header">
+                <div class="profile-avatar" id="client-avatar">C</div>
+                <div class="profile-info">
+                    <h1 id="client-name">Client Name</h1>
+                    <div class="profile-contact"><strong>Email:</strong> <span id="client-email">client@email.com</span></div>
+                    <div class="profile-contact"><strong>Company:</strong> <span id="client-company">Your Company Name</span></div>
+                </div>
+                <button class="manage-btn" onclick="window.location.href='Jobs Listing Page.txt'">View Public Job Board</button>
+            </div>
+            <div class="section-title">My Posted Jobs</div>
+            <div class="dashboard-card">
+                <div class="card-title">Active Job Listings</div>
+                <ul class="job-list" id="client-job-list">
+                    <li>
+                        Customer Support Specialist - <strong>12 Applications</strong>
+                        <button class="manage-btn" style="margin-left:10px;">Manage</button>
+                    </li>
+                    <li>
+                        Virtual Assistant - <strong>8 Applications</strong>
+                        <button class="manage-btn" style="margin-left:10px;">Manage</button>
+                    </li>
+                </ul>
+                <button class="manage-btn" onclick="window.location.href='Post a New Job.txt'">Post a New Job</button>
+            </div>
+            <div class="section-title">Recent Applications</div>
+            <div class="dashboard-card">
+                <div class="card-title">New Applicants</div>
+                <ul class="job-list" id="client-applications-list">
+                    <li>Jordan Smith - Customer Support Specialist</li>
+                    <li>Alex Johnson - Virtual Assistant</li>
+                </ul>
+                <button class="manage-btn" onclick="window.location.href='Inbox.txt'">View Inbox</button>
+            </div>
+            <div class="section-title">Quick Actions</div>
+            <div class="quick-actions-grid">
+                <a class="action-card" href="Post a New Job.txt"><i>➕</i> Post Job</a>
+                <a class="action-card" href="Inbox.txt"><i>📥</i> Inbox</a>
+                <a class="action-card" href="Contact & Support Page.txt"><i>❓</i> Contact Support</a>
+                <a class="action-card" href="Terms & Privacy.txt"><i>📜</i> Terms & Privacy</a>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-links">
+            <a href="https://sites.google.com/view/workfromhomewithshawn/jobs-listing-page">Jobs</a>
+            <a href="#how-it-works">How it Works</a>
+            <a href="#about">About</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/contact-support-page">Contact</a>
+            <a href="https://sites.google.com/view/workfromhomewithshawn/help-centerfaqs-page">Help</a>
+        </div>
+        <div>
+            &copy; 2024 Work from Home with Shawn. All rights reserved.
+        </div>
+    </footer>
+    <script>
+    // Account type display logic (no switcher in profile, just show correct dashboard)
+    // You should set this value based on user data from your backend/auth/profile
+    // For demo, default to agent. Replace this logic with your real user data.
+    (function() {
+        // Example: fetch account type from localStorage or backend
+        // let accountType = localStorage.getItem('accountType') || 'agent';
+        let accountType = 'agent'; // Default, replace with real value
+
+        // If you have user data, set accountType = user.accountType;
+        // For demo, you can manually set to 'client' to test
+
+        document.getElementById('agent-dashboard').style.display = (accountType === 'agent') ? '' : 'none';
+        document.getElementById('client-dashboard').style.display = (accountType === 'client') ? '' : 'none';
+    })();
+    </script>
 </body>
 </html>
