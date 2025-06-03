@@ -482,7 +482,7 @@
     </footer>
     <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -496,6 +496,35 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+function updateAuthLinks(user) {
+    const signInLink = document.querySelector('.auth-links a[href="signin.html"]');
+    const signOutId = 'signout-link';
+    let signOutLink = document.getElementById(signOutId);
+
+    if (user) {
+        if (signInLink) signInLink.style.display = 'none';
+        // Add sign out link if not present
+        if (!signOutLink) {
+            signOutLink = document.createElement('a');
+            signOutLink.id = signOutId;
+            signOutLink.href = "#";
+            signOutLink.textContent = "Sign out";
+            signOutLink.style.marginLeft = "24px";
+            signOutLink.onclick = async (e) => {
+                e.preventDefault();
+                await signOut(auth);
+                window.location.href = "index.html";
+            };
+            document.querySelector('.auth-links').appendChild(signOutLink);
+        } else {
+            signOutLink.style.display = 'inline-block';
+        }
+    } else {
+        if (signInLink) signInLink.style.display = 'inline-block';
+        if (signOutLink) signOutLink.style.display = 'none';
+    }
+}
 
 async function loadProfile() {
     const user = auth.currentUser;
@@ -535,6 +564,7 @@ async function loadProfile() {
 }
 
 onAuthStateChanged(auth, (user) => {
+    updateAuthLinks(user);
     if (user) {
         loadProfile();
     } else {
