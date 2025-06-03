@@ -92,6 +92,11 @@
         header nav a.active {
             border-bottom: 2px solid #7a684a;
         }
+        .auth-links {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
         .auth-links a {
             margin: 0 10px;
             text-decoration: none;
@@ -148,13 +153,17 @@
         <a href="faqs.html">FAQs</a>
         <a href="contact.html">Contact</a>
     </nav>
-    <div class="auth-links">
+    <div class="auth-links" style="display:flex;align-items:center;justify-content:flex-end;">
         <a href="signin.html" id="nav-signin-link">Sign in</a>
         <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
         <!-- Profile Icon Dropdown -->
         <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
             <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
             <div class="dropdown-content">
+                <div style="padding:12px 16px;font-weight:bold;">
+                    <span id="profile-user-name">User</span><br>
+                    <span id="profile-user-email" style="font-size:0.9em;color:#555;"></span>
+                </div>
                 <a href="profile.html">Profile</a>
                 <a href="edit-profile.html">Edit Profile</a>
                 <a href="#" id="dropdown-signout-link">Sign Out</a>
@@ -231,6 +240,8 @@ function updateAuthDisplay(user, userData = {}) {
     const postJobLink = document.getElementById('nav-post-job-link');
     const profileDropdownContainer = document.getElementById('profile-dropdown-container');
     const headerProfileAvatar = document.getElementById('header-profile-avatar');
+    const profileUserName = document.getElementById('profile-user-name');
+    const profileUserEmail = document.getElementById('profile-user-email');
 
     if (user) {
         if (signInLink) signInLink.style.display = 'none'; // Hide "Sign in"
@@ -241,6 +252,12 @@ function updateAuthDisplay(user, userData = {}) {
         if (headerProfileAvatar) {
             const displayName = userData.displayName || user.displayName || "U";
             headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+        }
+        if (profileUserName) {
+            profileUserName.textContent = userData.displayName || user.displayName || "User";
+        }
+        if (profileUserEmail) {
+            profileUserEmail.textContent = userData.email || user.email || "";
         }
     } else {
         if (signInLink) signInLink.style.display = 'inline-block'; // Show "Sign in"
@@ -258,13 +275,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Handle redirect after login
+    function handleRedirectAfterLogin(user, userData) {
+        const redirectPath = localStorage.getItem('redirectAfterLogin');
+        if (redirectPath && window.location.pathname !== redirectPath) {
+            localStorage.removeItem('redirectAfterLogin');
+            window.location.href = redirectPath;
+        } else {
+            updateAuthDisplay(user, userData);
+        }
+    }
+
     if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
         window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
             if (user) {
                 const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
                 const userDoc = await window.firebaseFirestoreFunctions.getDoc(userDocRef);
                 const userData = userDoc.exists() ? userDoc.data() : {};
-                updateAuthDisplay(user, userData);
+                handleRedirectAfterLogin(user, userData);
             } else {
                 updateAuthDisplay(null);
             }
@@ -274,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const signedIn = localStorage.getItem('signedIn') === 'true';
         if (signedIn) {
             // Simulate a client account for demo
-            updateAuthDisplay({displayName: "User"}, {accountType: "client", displayName: "User"});
+            handleRedirectAfterLogin({displayName: "User", email: "user@email.com"}, {accountType: "client", displayName: "User", email: "user@email.com"});
         } else {
             updateAuthDisplay(null);
         }
