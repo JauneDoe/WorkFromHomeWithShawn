@@ -384,7 +384,7 @@
                 try {
                     const user = window.firebaseAuth.currentUser;
                     const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
-                    // Only update fields that are present in the form
+                    // Save all form fields to user profile
                     const userUpdate = {
                         displayName: params.fullName || user.displayName || "",
                         email: params.email || user.email || "",
@@ -403,7 +403,7 @@
                         restrictedState: params.restrictedState || "",
                         otherInfo: params.otherInfo || "",
                         zoomDate: params.zoomDate || "",
-                        // You may want to store resume meta, but not the file itself in user profile
+                        accountType: "agent" // Set account type if needed
                     };
                     await window.firebaseFirestoreFunctions.setDoc(userDocRef, userUpdate, { merge: true });
                 } catch (err) {
@@ -429,7 +429,8 @@
                         convictionDetails: params.convictionDetails,
                         restrictedState: params.restrictedState,
                         otherInfo: params.otherInfo,
-                        zoomDate: params.zoomDate
+                        zoomDate: params.zoomDate,
+                        accountType: "agent"
                     }));
                 }
             }

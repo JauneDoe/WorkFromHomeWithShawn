@@ -146,19 +146,20 @@
             if (userDoc.exists()) {
                 const data = userDoc.data();
                 document.getElementById('displayName').value = data.displayName || '';
-                document.getElementById('email').value = auth.currentUser.email || ''; // From auth object
+                document.getElementById('email').value = auth.currentUser.email || data.email || '';
                 document.getElementById('phone').value = data.phone || '';
-                document.getElementById('location').value = data.location || '';
-                document.getElementById('bio').value = data.bio || '';
-                return data; // Return userData for updateAuthDisplay
+                document.getElementById('location').value = data.location || data.cityStateZip || '';
+                document.getElementById('bio').value = data.bio || data.otherInfo || '';
+                // Optionally, load more agent fields if you add them to the form
+                return data;
             }
-            return {}; // Return empty object if no data
+            return {};
         }
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userData = await loadProfileData(user.uid);
-                updateAuthDisplay(user, userData); // Pass loaded userData
+                updateAuthDisplay(user, userData);
             } else {
                 updateAuthDisplay(null);
             }
@@ -170,13 +171,16 @@
             if (user) {
                 const userDocRef = doc(db, "users", user.uid);
                 try {
+                    // Save all fields, merging agent/client fields as needed
                     await setDoc(userDocRef, {
                         displayName: document.getElementById('displayName').value,
                         phone: document.getElementById('phone').value,
                         location: document.getElementById('location').value,
-                        bio: document.getElementById('bio').value
-                        // email and accountType are typically managed elsewhere or set at creation
-                    }, { merge: true }); // Merge to avoid overwriting accountType etc.
+                        cityStateZip: document.getElementById('location').value, // keep both for compatibility
+                        bio: document.getElementById('bio').value,
+                        otherInfo: document.getElementById('bio').value // keep both for compatibility
+                        // Add more fields here if you add them to the form
+                    }, { merge: true });
                     alert('Profile updated successfully!');
                     // Optionally, update header avatar if display name changed
                     const newDisplayName = document.getElementById('displayName').value;
