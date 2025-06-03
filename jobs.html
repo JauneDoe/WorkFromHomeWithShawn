@@ -2,38 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Opportunities | Work from Home with Shawn</title>
+    <title>Jobs | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
-            --soft-blue: #f0f4ff;
+            --soft-blue: #e7f1ff;
             --button-brown: #7a684a;
-            --accent-gold: #e6c77d;
         }
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f7f5f0; color: #222; }
         header, footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 4px 24px #0002; }
         .container { max-width: 900px; margin: auto; padding: 20px; }
-        .job-card {
-            background: #fff;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px #0001;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            display: flex;
-            flex-direction: column;
+        .job-card { 
+            background: #fff; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px #0001; 
+            transition: transform 0.2s ease, box-shadow 0.2s ease; /* Added */
+            display: flex; /* Added for better layout */
+            flex-direction: column; /* Added */
         }
-        .job-card:hover {
+        .job-card:hover { /* Added */
             transform: translateY(-4px);
             box-shadow: 0 6px 12px #00000022;
         }
-        .job-title { font-size: 1.4em; color: #7a684a; margin-bottom: 5px; }
-        .job-meta {
+        .job-title { font-size: 1.4em; color: #7a684a; margin-bottom: 5px; /* Adjusted margin */ }
+        .job-meta { /* Added for company, location, pay */
             font-size: 0.95em;
             color: #555;
             margin-bottom: 10px;
         }
-        .job-tags {
+        .job-tags { /* Added for tags like Full-time */
             margin-bottom: 15px;
         }
         .job-tag {
@@ -44,24 +43,24 @@
             font-size: 0.85em;
             margin-right: 5px;
         }
-        .job-actions {
-            margin-top: auto;
+        .job-actions { /* Wrapper for buttons */
+            margin-top: auto; /* Pushes buttons to the bottom of the card */
             display: flex;
             gap: 10px;
         }
-        .apply-btn, .details-btn {
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
+        .apply-btn, .details-btn { /* Shared style for buttons */
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 4px; 
+            cursor: pointer; 
             font-weight: 500;
-            text-decoration: none;
-            display: inline-block;
+            text-decoration: none; /* For link-styled buttons */
+            display: inline-block; /* For link-styled buttons */
         }
         .apply-btn { background: #e6c77d; color: #222; }
         .details-btn { background: #7a684a; color: white; }
 
-        .filters-section {
+        .filters-section { /* Added for filters */
             background: #fff;
             padding: 15px;
             margin-bottom: 20px;
@@ -92,50 +91,6 @@
         header nav a.active {
             border-bottom: 2px solid #7a684a;
         }
-        .auth-links a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #7a684a;
-            font-weight: bold;
-        }
-
-        /* Profile Dropdown styles */
-        .profile-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        .profile-icon-avatar {
-            width: 36px;
-            height: 36px;
-            background: #7a684a;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            z-index: 1;
-            border-radius: 8px;
-        }
-        .profile-dropdown:hover .dropdown-content {
-            display: block;
-        }
-        .dropdown-content a {
-            color: #222;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown-content a:hover {
-            background-color: #e6c77d;
-        }
     </style>
 </head>
 <body>
@@ -143,7 +98,7 @@
     <div class="logo">Work from Home with Shawn</div>
     <nav>
         <a href="index.html">Home</a>
-        <a href="opportunities.html" class="active">Opportunities</a>
+        <a href="jobs.html" class="active">Opportunities</a>
         <a href="blog.html">Blog</a>
         <a href="faqs.html">FAQs</a>
         <a href="contact.html">Contact</a>
@@ -173,7 +128,7 @@
         <div class="filters-section">
             <input type="text" placeholder="Search by keyword..." id="keywordSearch">
             <select id="jobTypeFilter">
-                <option value="">All Opportunity Types</option>
+                <option value="">All Job Types</option>
                 <option value="Full-Time">Full-Time</option>
                 <option value="Part-Time">Part-Time</option>
                 <option value="Contract">Contract</option>
@@ -204,7 +159,7 @@
                 <button class="apply-btn" onclick="window.location.href='apply.html'">Quick Apply</button>
             </div>
         </div>
-        <!-- Add more job cards as needed -->
+        {/* Add more job cards here */}
 
         <!-- Documents & Resources Panel -->
         <div id="documents" style="background:#fff;border-radius:8px;box-shadow:0 2px 8px #0001;padding:16px 20px;margin-top:24px;">
@@ -226,29 +181,7 @@ function applyFilters() {
     console.log("Filtering jobs...");
 }
 
-function updateAuthDisplay(user, userData = {}) {
-    const signInLink = document.getElementById('nav-signin-link');
-    const postJobLink = document.getElementById('nav-post-job-link');
-    const profileDropdownContainer = document.getElementById('profile-dropdown-container');
-    const headerProfileAvatar = document.getElementById('header-profile-avatar');
-
-    if (user) {
-        if (signInLink) signInLink.style.display = 'none'; // Hide "Sign in"
-        if (postJobLink) {
-            postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
-        }
-        if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block'; // Show profile icon
-        if (headerProfileAvatar) {
-            const displayName = userData.displayName || user.displayName || "U";
-            headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
-        }
-    } else {
-        if (signInLink) signInLink.style.display = 'inline-block'; // Show "Sign in"
-        if (postJobLink) postJobLink.style.display = 'none';
-        if (profileDropdownContainer) profileDropdownContainer.style.display = 'none'; // Hide profile icon
-    }
-}
-
+// Standard auth display script
 document.addEventListener('DOMContentLoaded', function() {
     // Add redirectAfterLogin logic for Sign in link
     const signInLink = document.getElementById('nav-signin-link');
@@ -256,6 +189,29 @@ document.addEventListener('DOMContentLoaded', function() {
         signInLink.addEventListener('click', function() {
             localStorage.setItem('redirectAfterLogin', window.location.pathname);
         });
+    }
+
+    function updateAuthDisplay(user, userData = {}) {
+        const signInLink = document.getElementById('nav-signin-link');
+        const postJobLink = document.getElementById('nav-post-job-link');
+        const profileDropdownContainer = document.getElementById('profile-dropdown-container');
+        const headerProfileAvatar = document.getElementById('header-profile-avatar');
+
+        if (user) {
+            if (signInLink) signInLink.style.display = 'none';
+            if (postJobLink) {
+                postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
+            }
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+            if (headerProfileAvatar) {
+                const displayName = userData.displayName || (user && user.displayName) || "U";
+                headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+            }
+        } else {
+            if (signInLink) signInLink.style.display = 'inline-block';
+            if (postJobLink) postJobLink.style.display = 'none';
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
+        }
     }
 
     if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
@@ -269,44 +225,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateAuthDisplay(null);
             }
         });
-    } else {
-        // Fallback for non-Firebase (localStorage)
-        const signedIn = localStorage.getItem('signedIn') === 'true';
-        if (signedIn) {
-            // Simulate a client account for demo
-            updateAuthDisplay({displayName: "User"}, {accountType: "client", displayName: "User"});
-        } else {
-            updateAuthDisplay(null);
-        }
-    }
 
-    // Profile dropdown sign out
-    const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
-    if (dropdownSignOutLink) {
-        dropdownSignOutLink.onclick = function(e) {
-            e.preventDefault();
-            if (window.firebaseAuthFunctions && window.firebaseAuth) {
+        const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
+        if (dropdownSignOutLink) {
+            dropdownSignOutLink.onclick = function(e) {
+                e.preventDefault();
                 window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
-                    updateAuthDisplay(null);
                     window.location.href = "index.html";
                 });
-            } else {
-                localStorage.setItem('signedIn', 'false');
-                updateAuthDisplay(null);
-                window.location.href = "index.html";
-            }
-        };
-    }
-});
-
-// --- Chat Widget Fix: Close on X ---
-document.addEventListener('DOMContentLoaded', function() {
-    const chatWindow = document.getElementById('aiChatWindow');
-    const closeBtn = document.getElementById('closeAiChatBtn');
-    if (closeBtn && chatWindow) {
-        closeBtn.addEventListener('click', function() {
-            chatWindow.classList.remove('open');
-        });
+            };
+        }
+    } else { 
+        console.warn("Firebase auth object not found on window. Auth links might not update dynamically.");
+        const localUser = localStorage.getItem('signedIn') === 'true' ? { displayName: 'User' } : null;
+        const localUserData = localUser ? JSON.parse(localStorage.getItem('userData') || '{}') : {};
+        updateAuthDisplay(localUser, localUserData);
     }
 });
 </script>
