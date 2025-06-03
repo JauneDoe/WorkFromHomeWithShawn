@@ -152,6 +152,7 @@
         const formTitle = document.getElementById('form-title');
         const submitBtn = document.getElementById('submit-btn');
         const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
         let isSignUp = false;
 
         function setAuthState(signUpState) {
@@ -176,20 +177,35 @@
             setAuthState(!isSignUp);
         };
 
-        form.onsubmit = function(e) {
+        form.onsubmit = async function(e) {
             e.preventDefault();
+            errorDiv.textContent = '';
             const email = emailInput.value.trim();
-            const password = form.password.value.trim();
+            const password = passwordInput.value;
+            const displayName = isSignUp && form.displayName ? form.displayName.value.trim() : "";
+
             if (isSignUp) {
-                const displayName = form.displayName.value.trim();
-                // Handle sign up logic here
-                console.log('Sign Up:', { displayName, email, password });
-                // TODO: Implement actual sign up with Firebase
-            } else {
-                // Handle sign in logic here
-                console.log('Sign In:', { email, password });
-                // TODO: Implement actual sign in with Firebase
+                if (!displayName) {
+                    errorDiv.textContent = "Please enter a display name.";
+                    return;
+                }
+                if (password.length < 6) {
+                    errorDiv.textContent = "Password should be at least 6 characters.";
+                    return;
+                }
             }
+
+            // Use your Firebase auth logic here, as in !DOCTYPE html.txt
+            // Example:
+            // try {
+            //     if (isSignUp) {
+            //         // sign up logic
+            //     } else {
+            //         // sign in logic
+            //     }
+            // } catch (err) {
+            //     errorDiv.textContent = err.message.replace('Firebase: ', '');
+            // }
         };
     });
     </script>
