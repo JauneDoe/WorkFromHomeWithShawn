@@ -5,127 +5,155 @@
     <title>Terms & Privacy | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%); color: #222; margin: 0; }
+        :root {
+            --primary-bg: #f7f5f0;
+            --accent-gold: #e6c77d;
+            --button-brown: #7a684a;
+            --text-black: #222222;
+            --white: #ffffff;
+            --soft-blue: #eaf0fa;
+            --shadow: 0 4px 24px #0002;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--primary-bg); color: var(--text-black); }
         header {
             position: sticky; top: 0; z-index: 10;
             display: flex; align-items: center; padding: 24px 48px;
-            background: #fff; box-shadow: 0 4px 24px #0002;
+            background: var(--white); box-shadow: var(--shadow);
         }
-        .logo { font-size: 2.2em; font-weight: bold; color: #7a684a; letter-spacing: 1px; }
+        .logo { font-size: 2.2em; font-weight: bold; color: var(--button-brown); letter-spacing: 1px; }
         nav { margin-left: 40px; }
-        nav a { margin: 0 18px; text-decoration: none; color: #222; font-weight: 500; font-size: 1.08em; transition: color 0.2s; }
-        nav a.active, nav a:hover { color: #7a684a; border-bottom: 2px solid #e6c77d; padding-bottom: 4px; }
+        nav a { margin: 0 18px; text-decoration: none; color: var(--text-black); font-weight: 500; font-size: 1.08em; transition: color 0.2s; }
+        nav a.active, nav a:hover { color: var(--button-brown); border-bottom: 2px solid var(--accent-gold); padding-bottom: 4px; }
         .auth-links { margin-left: auto; display: flex; align-items: center; }
-        .auth-links > a { margin-left: 24px; color: #7a684a; text-decoration: none; font-weight: 500; font-size: 1.05em; }
+        .auth-links > a { margin-left: 24px; color: var(--button-brown); text-decoration: none; font-weight: 500; font-size: 1.05em; }
 
-        /* Profile Dropdown Styles */
         .profile-dropdown { position: relative; display: inline-block; margin-left: 20px; }
         .profile-icon-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--button-brown); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: bold; cursor: pointer; border: 1px solid var(--accent-gold); }
-        .dropdown-content { display: none; position: absolute; right: 0; background-color: #fff; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 101; border-radius: 4px; margin-top: 5px; }
-        .dropdown-content a { color: #222; padding: 12px 16px; text-decoration: none; display: block; font-size: 0.95em; margin-left: 0; font-weight: normal; }
-        .dropdown-content a:hover { background-color: #eaf0fa; color: #7a684a; }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: var(--white); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 101; border-radius: 4px; margin-top: 5px; }
+        .dropdown-content a { color: var(--text-black); padding: 12px 16px; text-decoration: none; display: block; font-size: 0.95em; margin-left: 0; font-weight: normal; }
+        .dropdown-content a:hover { background-color: var(--soft-blue); color: var(--button-brown); }
         .profile-dropdown:hover .dropdown-content,
         .profile-dropdown .profile-icon-avatar:focus + .dropdown-content,
         .profile-dropdown .dropdown-content:hover { display: block; }
         .profile-icon-avatar:focus { outline: 2px solid var(--accent-gold); }
-        
-        .container { max-width: 800px; margin: 20px auto; background: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 20px; }
-        h2 { color: #7a684a; margin-top: 20px; }
-        p { line-height: 1.6; margin-bottom: 15px; }
-        footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 -4px 24px #0002; margin-top: 20px; }
 
+        main { max-width: 800px; margin: 40px auto; padding: 20px; background: var(--white); border-radius: 8px; box-shadow: var(--shadow); }
+        h1 { color: var(--button-brown); margin-bottom: 20px; }
+        h2 { color: var(--button-brown); margin-top: 30px; margin-bottom: 10px; }
+        p, ul li { line-height: 1.6; }
+        ul { padding-left: 20px; }
+        footer { background: var(--white); border-top: 1px solid var(--accent-gold); padding: 36px 0 16px 0; text-align: center; font-size: 1em; color: var(--text-black); margin-top: 40px;}
     </style>
 </head>
 <body>
-<header>
-    <div class="logo">Work from Home with Shawn</div>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="opportunities.html">Opportunities</a>
-        <a href="blog.html">Blog</a>
-        <a href="faqs.html">FAQs</a>
-        <a href="contact.html">Contact</a>
-        <a href="privacy.html" class="active">Terms & Privacy</a>
-    </nav>
-    <div class="auth-links">
-        <a href="signin.html" id="nav-signin-link">Sign in</a>
-        <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
-        <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
-            <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
-            <div class="dropdown-content">
-                <a href="profile.html">Profile</a>
-                <a href="edit-profile.html">Edit Profile</a>
-                <a href="#" id="dropdown-signout-link">Sign Out</a>
+    <header>
+        <div class="logo">Work from Home with Shawn</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="opportunities.html">Opportunities</a>
+            <a href="blog.html">Blog</a>
+            <a href="faqs.html">FAQs</a>
+            <a href="contact.html">Contact</a>
+            <a href="terms.html" class="active">Terms & Privacy</a>
+        </nav>
+        <div class="auth-links">
+            <a href="signin.html" id="nav-signin-link">Sign in</a>
+            <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+            <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
+                <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
+                <div class="dropdown-content">
+                    <a href="profile.html">Profile</a>
+                    <a href="edit-profile.html">Edit Profile</a>
+                    <a href="#" id="dropdown-signout-link">Sign Out</a>
+                </div>
             </div>
         </div>
-    </div>
-</header>
-<div class="container">
-    <h2>Terms of Service</h2>
-    <p>Welcome to Work from Home with Shawn. By accessing or using our website, you agree to be bound by these Terms of Service. If you do not agree to all the terms, do not use the site.</p>
-    <p><strong>User Accounts:</strong> You are responsible for maintaining the confidentiality of your account information and for all activities under your account.</p>
-    <p><strong>Job Postings:</strong> Clients must ensure that all job information is accurate and lawful. We are not responsible for any discrepancies or disputes.</p>
-    <p><strong>Service Eligibility:</strong> Users must be at least 18 years old or have parental consent to use our services.</p>
-    <p><em>(Content for Terms of Service...)</em></p>
-    
-    <h2>Privacy Policy</h2>
-    <p><em>(Content for Privacy Policy...)</em></p>
-</div>
-<footer>&copy; 2024 Work from Home with Shawn</footer>
-<script>
-// Standard auth display script (similar to index.html's second script block)
-document.addEventListener('DOMContentLoaded', function() {
-    function updateAuthDisplay(user, userData = {}) {
-        const signInLink = document.getElementById('nav-signin-link');
-        const postJobLink = document.getElementById('nav-post-job-link');
-        const profileDropdownContainer = document.getElementById('profile-dropdown-container');
-        const headerProfileAvatar = document.getElementById('header-profile-avatar');
+    </header>
+    <main>
+        <h1>Terms of Service & Privacy Policy</h1>
 
-        if (user) {
-            if (signInLink) signInLink.style.display = 'none';
-            if (postJobLink) {
-                postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
-            }
-            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
-            if (headerProfileAvatar) {
-                const displayName = userData.displayName || (user && user.displayName) || "U";
-                headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
-            }
-        } else {
-            if (signInLink) signInLink.style.display = 'inline-block';
-            if (postJobLink) postJobLink.style.display = 'none';
-            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
-        }
-    }
+        <section id="terms">
+            <h2>Terms of Service</h2>
+            <p>Welcome to Work from Home with Shawn. By accessing or using our website and services, you agree to comply with and be bound by the following terms and conditions. Please review them carefully.</p>
+            <p><strong>1. Acceptance of Terms:</strong> Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.</p>
+            <p><strong>2. User Accounts:</strong> When you create an account with us, you must provide information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.</p>
+            <p><strong>3. Content:</strong> Our Service allows you to post, link, store, share and otherwise make available certain information, text, graphics, videos, or other material ("Content"). You are responsible for the Content that you post on or through the Service, including its legality, reliability, and appropriateness.</p>
+            <p><strong>4. Prohibited Uses:</strong> You may use the Service only for lawful purposes and in accordance with Terms. You agree not to use the Service in any way that violates any applicable national or international law or regulation.</p>
+            <p><strong>5. Termination:</strong> We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+            <p><em>Last updated: [Date]</em></p>
+        </section>
 
-    if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
-        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
+        <section id="privacy">
+            <h2>Privacy Policy</h2>
+            <p>Your privacy is important to us. It is Work from Home with Shawn's policy to respect your privacy regarding any information we may collect from you across our website.</p>
+            <p><strong>1. Information We Collect:</strong> We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.</p>
+            <p><strong>2. Use of Information:</strong> We may use the information we collect for various purposes, including to provide, maintain, and improve our services, to develop new services, and to protect our company and our users.</p>
+            <p><strong>3. Data Security:</strong> We strive to use commercially acceptable means to protect your Personal Information, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure.</p>
+            <p><strong>4. Cookies:</strong> We use cookies to help us remember and process your preferences for future visits and compile aggregate data about site traffic and site interaction so that we can offer better site experiences and tools in the future.</p>
+            <p><strong>5. Changes to This Privacy Policy:</strong> We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
+            <p><em>Last updated: [Date]</em></p>
+        </section>
+    </main>
+    <footer>
+        &copy; 2024 Work from Home with Shawn. All rights reserved.
+    </footer>
+    <script>
+    // Standard auth display script (from index.html)
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateAuthDisplay(user, userData = {}) {
+            const signInLink = document.getElementById('nav-signin-link');
+            const postJobLink = document.getElementById('nav-post-job-link');
+            const profileDropdownContainer = document.getElementById('profile-dropdown-container');
+            const headerProfileAvatar = document.getElementById('header-profile-avatar');
+
             if (user) {
-                const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
-                const userDoc = await window.firebaseFirestoreFunctions.getDoc(userDocRef);
-                const userData = userDoc.exists() ? userDoc.data() : {};
-                updateAuthDisplay(user, userData);
+                if (signInLink) signInLink.style.display = 'none';
+                if (postJobLink) {
+                    postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
+                }
+                if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+                if (headerProfileAvatar) {
+                    const displayName = userData.displayName || (user && user.displayName) || "U";
+                    headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+                }
             } else {
-                updateAuthDisplay(null);
+                if (signInLink) signInLink.style.display = 'inline-block';
+                if (postJobLink) postJobLink.style.display = 'none';
+                if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
             }
-        });
-
-        const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
-        if (dropdownSignOutLink) {
-            dropdownSignOutLink.onclick = function(e) {
-                e.preventDefault();
-                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
-                    window.location.href = "index.html";
-                });
-            };
         }
-    } else { 
-        console.warn("Firebase auth object not found on window. Auth links might not update dynamically.");
-        const localUser = localStorage.getItem('signedIn') === 'true' ? { displayName: 'User' } : null;
-        const localUserData = localUser ? JSON.parse(localStorage.getItem('userData') || '{}') : {};
-        updateAuthDisplay(localUser, localUserData);
-    }
-});
-</script>
+
+        if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
+            window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
+                if (user) {
+                    const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
+                    const userDoc = await window.firebaseFirestoreFunctions.getDoc(userDocRef);
+                    const userData = userDoc.exists() ? userDoc.data() : {};
+                    updateAuthDisplay(user, userData);
+                } else {
+                    updateAuthDisplay(null);
+                }
+            });
+
+            const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
+            if (dropdownSignOutLink) {
+                dropdownSignOutLink.onclick = function(e) {
+                    e.preventDefault();
+                    window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
+                        window.location.href = "index.html";
+                    }).catch(error => {
+                        console.error("Sign out error:", error);
+                    });
+                };
+            }
+        } else { 
+            console.warn("Firebase auth object not found on window. Auth links might not update dynamically. Using localStorage fallback.");
+            const localUserIsSignedIn = localStorage.getItem('signedIn') === 'true';
+            const localUser = localUserIsSignedIn ? { displayName: (JSON.parse(localStorage.getItem('userData') || '{}').displayName || 'User') } : null;
+            const localUserData = localUserIsSignedIn ? JSON.parse(localStorage.getItem('userData') || '{}') : {};
+            updateAuthDisplay(localUser, localUserData);
+        }
+    });
+    </script>
 </body>
 </html>

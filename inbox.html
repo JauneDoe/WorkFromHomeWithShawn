@@ -5,26 +5,59 @@
     <title>Inbox | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* Add :root variables if not already present */
+        :root {
+            --primary-bg: #f7f5f0;
+            --accent-gold: #e6c77d;
+            --button-brown: #7a684a;
+            --text-black: #222222;
+            --white: #ffffff;
+            --soft-blue: #eaf0fa;
+            --shadow: 0 4px 24px #0002;
+        }
         body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%); color: #222; margin: 0; }
-        header, footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 4px 24px #0002; }
-        .container { display: flex; max-width: 1000px; margin: 20px auto; background: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+        /* Standard header styles from index.html */
+        header {
+            position: sticky; top: 0; z-index: 10;
+            display: flex; align-items: center; padding: 24px 48px;
+            background: var(--white); box-shadow: var(--shadow);
+        }
+        .logo { font-size: 2.2em; font-weight: bold; color: var(--button-brown); letter-spacing: 1px; }
+        nav { margin-left: 40px; }
+        nav a { margin: 0 18px; text-decoration: none; color: var(--text-black); font-weight: 500; font-size: 1.08em; transition: color 0.2s; }
+        nav a.active, nav a:hover { color: var(--button-brown); border-bottom: 2px solid var(--accent-gold); padding-bottom: 4px; }
+        .auth-links { margin-left: auto; display: flex; align-items: center; }
+        .auth-links > a { margin-left: 24px; color: var(--button-brown); text-decoration: none; font-weight: 500; font-size: 1.05em; }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown { position: relative; display: inline-block; margin-left: 20px; }
+        .profile-icon-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--button-brown); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: bold; cursor: pointer; border: 1px solid var(--accent-gold); }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: var(--white); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 101; border-radius: 4px; margin-top: 5px; }
+        .dropdown-content a { color: var(--text-black); padding: 12px 16px; text-decoration: none; display: block; font-size: 0.95em; margin-left: 0; font-weight: normal; }
+        .dropdown-content a:hover { background-color: var(--soft-blue); color: var(--button-brown); }
+        .profile-dropdown:hover .dropdown-content,
+        .profile-dropdown .profile-icon-avatar:focus + .dropdown-content,
+        .profile-dropdown .dropdown-content:hover { display: block; }
+        .profile-icon-avatar:focus { outline: 2px solid var(--accent-gold); }
+
+        .container { display: flex; max-width: 1000px; margin: 20px auto; background: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 2px 8px #0001; min-height: calc(100vh - 160px); /* Adjust based on header/footer height */}
         .sidebar { width: 250px; border-right: 1px solid #e6c77d; }
-        .sidebar h2 { margin: 0; padding: 15px; background: #7a684a; color: #fff; border-radius: 8px 8px 0 0; }
+        .sidebar h2 { margin: 0; padding: 15px; background: #7a684a; color: #fff; /* Removed border-radius for top corners if header is sticky */ }
         .conversation-list { list-style: none; margin: 0; padding: 0; }
         .conversation-item { padding: 12px 15px; border-bottom: 1px solid #e6c77d; cursor: pointer; }
         .conversation-item:hover { background: #eaf0fa; }
         .chat-window { flex: 1; display: flex; flex-direction: column; }
         .messages { flex: 1; padding: 15px; overflow-y: auto; }
-        .message { margin-bottom: 15px; max-width: 70%; padding: 10px 14px; border-radius: 8px; }
-        .message.sent { background: #e6c77d; align-self: flex-end; color: #222; }
-        .message.received { background: #fff; align-self: flex-start; border: 1px solid #e6c77d; }
+        .message { margin-bottom: 15px; max-width: 70%; padding: 10px 14px; border-radius: 8px; display: flex; /* Added for alignment */ }
+        .message.sent { background: #e6c77d; margin-left: auto; /* Aligns to right */ color: #222; }
+        .message.received { background: #fff; margin-right: auto; /* Aligns to left */ border: 1px solid #e6c77d; }
         .message-input { display: flex; border-top: 1px solid #e6c77d; }
         .message-input input { flex: 1; border: none; padding: 15px; font-size: 1em; }
         .message-input button { background: #7a684a; color: #fff; border: none; padding: 0 20px; cursor: pointer; }
-        .logo { font-size: 1.5em; font-weight: bold; }
-        nav { margin: 10px 0; }
-        nav a { margin: 0 10px; text-decoration: none; color: #7a684a; }
-        .auth-links a { margin: 0 10px; text-decoration: none; color: #7a684a; }
+        /* .logo class was simplified, ensure it matches the standard if used */
+        /* nav a color was #7a684a, standard is var(--text-black) */
+        /* .auth-links a color was #7a684a, standard is var(--button-brown) */
+        footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 -4px 24px #0002; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -32,14 +65,22 @@
     <div class="logo">Work from Home with Shawn</div>
     <nav>
         <a href="index.html">Home</a>
-        <a href="jobs.html">Opportunities</a>
+        <a href="opportunities.html">Opportunities</a>
         <a href="blog.html">Blog</a>
         <a href="faqs.html">FAQs</a>
         <a href="contact.html">Contact</a>
     </nav>
     <div class="auth-links">
-        <a href="signin.html">Sign in</a>
-        <a href="post-job.html">Post an Opportunity</a>
+        <a href="signin.html" id="nav-signin-link">Sign in</a>
+        <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+        <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
+            <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
+            <div class="dropdown-content">
+                <a href="profile.html">Profile</a>
+                <a href="edit-profile.html">Edit Profile</a>
+                <a href="#" id="dropdown-signout-link">Sign Out</a>
+            </div>
+        </div>
     </div>
 </header>
 <div class="container">
@@ -64,7 +105,7 @@
 </div>
 <footer>&copy; 2024 Work from Home with Shawn</footer>
 <script>
-// Standard auth display script
+// Standard auth display script (from index.html)
 document.addEventListener('DOMContentLoaded', function() {
     function updateAuthDisplay(user, userData = {}) {
         const signInLink = document.getElementById('nav-signin-link');
@@ -107,13 +148,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
                     window.location.href = "index.html";
+                }).catch(error => {
+                    console.error("Sign out error:", error);
                 });
             };
         }
     } else { 
-        console.warn("Firebase auth object not found on window. Auth links might not update dynamically.");
-        const localUser = localStorage.getItem('signedIn') === 'true' ? { displayName: 'User' } : null;
-        const localUserData = localUser ? JSON.parse(localStorage.getItem('userData') || '{}') : {};
+        console.warn("Firebase auth object not found on window. Auth links might not update dynamically. Using localStorage fallback.");
+        const localUserIsSignedIn = localStorage.getItem('signedIn') === 'true';
+        const localUser = localUserIsSignedIn ? { displayName: (JSON.parse(localStorage.getItem('userData') || '{}').displayName || 'User') } : null;
+        const localUserData = localUserIsSignedIn ? JSON.parse(localStorage.getItem('userData') || '{}') : {};
         updateAuthDisplay(localUser, localUserData);
     }
 });

@@ -5,31 +5,49 @@
     <title>Edit Profile | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f7f5f0; color: #222; margin: 0; }
+        :root {
+            --primary-bg: #f7f5f0;
+            --accent-gold: #e6c77d;
+            --button-brown: #7a684a;
+            --text-black: #222222;
+            --white: #ffffff;
+            --soft-blue: #eaf0fa;
+            --shadow: 0 4px 24px #0002;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--primary-bg); color: var(--text-black); }
         header {
             position: sticky; top: 0; z-index: 10;
             display: flex; align-items: center; padding: 24px 48px;
-            background: #fff; box-shadow: 0 4px 24px #0002;
+            background: var(--white); box-shadow: var(--shadow);
         }
-        .logo { font-size: 2.2em; font-weight: bold; color: #7a684a; letter-spacing: 1px; }
+        .logo { font-size: 2.2em; font-weight: bold; color: var(--button-brown); letter-spacing: 1px; }
         nav { margin-left: 40px; }
-        nav a {
-            margin: 0 18px; text-decoration: none; color: #222; font-weight: 500; font-size: 1.08em; transition: color 0.2s;
+        nav a { margin: 0 18px; text-decoration: none; color: var(--text-black); font-weight: 500; font-size: 1.08em; transition: color 0.2s; }
+        nav a.active, nav a:hover { color: var(--button-brown); border-bottom: 2px solid var(--accent-gold); padding-bottom: 4px; }
+        .auth-links { margin-left: auto; display: flex; align-items: center; }
+        .auth-links > a { margin-left: 24px; color: var(--button-brown); text-decoration: none; font-weight: 500; font-size: 1.05em; }
+
+        .profile-dropdown { position: relative; display: inline-block; margin-left: 20px; }
+        .profile-icon-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--button-brown); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: bold; cursor: pointer; border: 1px solid var(--accent-gold); }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: var(--white); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 101; border-radius: 4px; margin-top: 5px; }
+        .dropdown-content a { color: var(--text-black); padding: 12px 16px; text-decoration: none; display: block; font-size: 0.95em; margin-left: 0; font-weight: normal; }
+        .dropdown-content a:hover { background-color: var(--soft-blue); color: var(--button-brown); }
+        .profile-dropdown:hover .dropdown-content,
+        .profile-dropdown .profile-icon-avatar:focus + .dropdown-content,
+        .profile-dropdown .dropdown-content:hover { display: block; }
+        .profile-icon-avatar:focus { outline: 2px solid var(--accent-gold); }
+
+        main { max-width: 700px; margin: 40px auto; padding: 20px; background: var(--white); border-radius: 8px; box-shadow: var(--shadow); }
+        h1 { color: var(--button-brown); margin-bottom: 20px; text-align: center; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; color: var(--button-brown); }
+        input[type="text"], input[type="email"], input[type="tel"], textarea {
+            padding: 10px; border: 1px solid var(--accent-gold); border-radius: 4px; font-size: 1em;
         }
-        nav a.active, nav a:hover {
-            color: #7a684a; border-bottom: 2px solid #e6c77d; padding-bottom: 4px;
-        }
-        .auth-links { margin-left: auto; }
-        .auth-links a {
-            margin-left: 24px; color: #7a684a; text-decoration: none; font-weight: 500; font-size: 1.05em;
-        }
-        .container { max-width: 500px; margin: 60px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px #0002; padding: 40px 32px; }
-        h2 { text-align: center; color: #7a684a; margin-bottom: 24px; font-weight: bold; }
-        label { font-weight: 500; color: #7a684a; margin-bottom: 6px; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 18px; border: 1px solid #e6c77d; border-radius: 6px; }
-        button { background: #7a684a; color: #fff; border: none; border-radius: 6px; padding: 14px 0; width: 100%; font-size: 1.08em; font-weight: 600; cursor: pointer; }
-        .error { color: #d32f2f; text-align: center; margin-bottom: 10px; }
-        .success { color: #2e7d32; text-align: center; margin-bottom: 10px; }
+        textarea { resize: vertical; min-height: 80px; }
+        .submit-btn { background: var(--button-brown); color: var(--white); border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-size: 1.05em; font-weight: 500; }
+        .submit-btn:hover { background: #5e513a; }
+        footer { background: var(--white); border-top: 1px solid var(--accent-gold); padding: 36px 0 16px 0; text-align: center; font-size: 1em; color: var(--text-black); margin-top: 40px;}
     </style>
 </head>
 <body>
@@ -37,33 +55,54 @@
         <div class="logo">Work from Home with Shawn</div>
         <nav>
             <a href="index.html">Home</a>
-            <a href="jobs.html">Opportunities</a>
+            <a href="opportunities.html">Opportunities</a>
             <a href="blog.html">Blog</a>
             <a href="faqs.html">FAQs</a>
             <a href="contact.html">Contact</a>
         </nav>
         <div class="auth-links">
-            <a href="signin.html">Sign in</a>
-            <a href="post-job.html">Post an Opportunity</a>
+            <a href="signin.html" id="nav-signin-link">Sign in</a>
+            <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+            <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
+                <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
+                <div class="dropdown-content">
+                    <a href="profile.html">Profile</a>
+                    <a href="edit-profile.html" class="active">Edit Profile</a>
+                    <a href="#" id="dropdown-signout-link">Sign Out</a>
+                </div>
+            </div>
         </div>
     </header>
-    <div class="container">
-        <h2>Edit Profile</h2>
-        <div id="msg"></div>
-        <form id="edit-profile-form">
-            <label for="displayName">Full Name</label>
+    <main>
+        <h1>Edit Your Profile</h1>
+        <form id="editProfileForm">
+            <label for="displayName">Display Name:</label>
             <input type="text" id="displayName" name="displayName" required>
-            <label for="phone">Phone Number</label>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required disabled> <!-- Email usually not editable directly or needs verification -->
+
+            <label for="phone">Phone Number:</label>
             <input type="tel" id="phone" name="phone">
-            <label for="location">Location</label>
+
+            <label for="location">Location (City, State):</label>
             <input type="text" id="location" name="location">
-            <button type="submit">Save Changes</button>
+            
+            <label for="bio">Short Bio:</label>
+            <textarea id="bio" name="bio"></textarea>
+
+            <button type="submit" class="submit-btn">Save Changes</button>
         </form>
-    </div>
+    </main>
+    <footer>
+        &copy; 2024 Work from Home with Shawn. All rights reserved.
+    </footer>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko",
             authDomain: "workwithshawnauth.firebaseapp.com",
@@ -72,47 +111,96 @@
             messagingSenderId: "38163174001",
             appId: "1:38163174001:web:45a352c8da0112bcfe41d0"
         };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const form = document.getElementById('edit-profile-form');
-        const msgDiv = document.getElementById('msg');
-        let currentUser = null;
+        function updateAuthDisplay(user, userData = {}) {
+            const signInLink = document.getElementById('nav-signin-link');
+            const postJobLink = document.getElementById('nav-post-job-link');
+            const profileDropdownContainer = document.getElementById('profile-dropdown-container');
+            const headerProfileAvatar = document.getElementById('header-profile-avatar');
+
+            if (user) {
+                if (signInLink) signInLink.style.display = 'none';
+                if (postJobLink) {
+                    postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
+                }
+                if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+                if (headerProfileAvatar) {
+                    const displayName = userData.displayName || user.displayName || "U";
+                    headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+                }
+            } else {
+                if (signInLink) signInLink.style.display = 'inline-block';
+                if (postJobLink) postJobLink.style.display = 'none';
+                if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
+                window.location.href = 'signin.html'; // Redirect if not signed in
+            }
+        }
+        
+        async function loadProfileData(userId) {
+            const userDocRef = doc(db, "users", userId);
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+                const data = userDoc.data();
+                document.getElementById('displayName').value = data.displayName || '';
+                document.getElementById('email').value = auth.currentUser.email || ''; // From auth object
+                document.getElementById('phone').value = data.phone || '';
+                document.getElementById('location').value = data.location || '';
+                document.getElementById('bio').value = data.bio || '';
+                return data; // Return userData for updateAuthDisplay
+            }
+            return {}; // Return empty object if no data
+        }
 
         onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
+            if (user) {
+                const userData = await loadProfileData(user.uid);
+                updateAuthDisplay(user, userData); // Pass loaded userData
+            } else {
+                updateAuthDisplay(null);
             }
-            currentUser = user;
-            // Prefill fields from Firestore if available
-            const userDoc = await getDoc(doc(db, "users", user.uid));
-            const data = userDoc.exists() ? userDoc.data() : {};
-            form.displayName.value = data.displayName || user.displayName || "";
-            form.phone.value = data.phone || "";
-            form.location.value = data.location || "";
         });
 
-        form.onsubmit = async (e) => {
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            msgDiv.textContent = "";
-            msgDiv.className = "";
-            if (!currentUser) return;
-            const displayName = form.displayName.value.trim();
-            const phone = form.phone.value.trim();
-            const location = form.location.value.trim();
-            try {
-                await updateProfile(currentUser, { displayName });
-                await setDoc(doc(db, "users", currentUser.uid), { displayName, phone, location }, { merge: true });
-                msgDiv.textContent = "Profile updated!";
-                msgDiv.className = "success";
-                setTimeout(() => window.location.href = "profile.html", 1200);
-            } catch (err) {
-                msgDiv.textContent = err.message;
-                msgDiv.className = "error";
+            const user = auth.currentUser;
+            if (user) {
+                const userDocRef = doc(db, "users", user.uid);
+                try {
+                    await setDoc(userDocRef, {
+                        displayName: document.getElementById('displayName').value,
+                        phone: document.getElementById('phone').value,
+                        location: document.getElementById('location').value,
+                        bio: document.getElementById('bio').value
+                        // email and accountType are typically managed elsewhere or set at creation
+                    }, { merge: true }); // Merge to avoid overwriting accountType etc.
+                    alert('Profile updated successfully!');
+                    // Optionally, update header avatar if display name changed
+                    const newDisplayName = document.getElementById('displayName').value;
+                    if (document.getElementById('header-profile-avatar') && newDisplayName) {
+                        document.getElementById('header-profile-avatar').textContent = newDisplayName[0].toUpperCase();
+                    }
+                } catch (error) {
+                    console.error("Error updating profile: ", error);
+                    alert('Error updating profile.');
+                }
             }
-        };
+        });
+        
+        const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
+        if (dropdownSignOutLink) {
+            dropdownSignOutLink.onclick = async function(e) {
+                e.preventDefault();
+                try {
+                    await signOut(auth);
+                } catch (error) {
+                    console.error("Sign out error", error);
+                }
+            };
+        }
     </script>
 </body>
 </html>

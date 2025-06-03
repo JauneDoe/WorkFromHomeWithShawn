@@ -376,10 +376,9 @@
             <a href="contact.html">Contact</a>
         </nav>
         <div class="auth-links">
-            <a href="signin.html" id="nav-signin-link" style="display:none;">Sign in</a>
+            <a href="signin.html" id="nav-signin-link">Sign in</a>
             <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
-            <!-- Profile Icon Dropdown -->
-            <div class="profile-dropdown" id="profile-dropdown-container">
+            <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
                 <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
                 <div class="dropdown-content">
                     <a href="profile.html">Profile</a>
@@ -393,20 +392,12 @@
         <!-- AGENT DASHBOARD -->
         <div id="agent-dashboard">
             <div class="profile-header">
-                <div class="profile-avatar" id="profile-avatar">U</div>
+                <div class="profile-avatar" id="profile-avatar-initial">U</div>
                 <div class="profile-info">
                     <h1 id="profile-name">User Name</h1>
-                    <div class="profile-contact"><i>📧</i> <span id="profile-email">user@example.com</span></div>
-                    <div class="profile-contact"><i>📞</i> <span id="profile-phone">(555) 555-5555</span></div>
-                    <div class="profile-contact"><i>📍</i> <span id="profile-location">Remote, World</span></div>
-                    <div class="profile-status">✔ Independent Contractor</div>
-                    <div class="profile-onboarding-progress">
-                        <div class="progress-label">Onboarding: Step 3 of 5</div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" id="onboardingProgressBar" style="width: 60%;"></div>
-                        </div>
-                    </div>
-                    <button style="margin-top:16px;" onclick="window.location.href='edit-profile.html'">Edit Profile</button>
+                    <div class="profile-contact"><i class="fas fa-envelope"></i> <span id="profile-email">email@example.com</span></div>
+                    <div class="profile-contact"><i class="fas fa-phone"></i> <span id="profile-phone">(123) 456-7890</span></div>
+                    <div class="profile-contact"><i class="fas fa-map-marker-alt"></i> <span id="profile-location">City, State</span></div>
                 </div>
             </div>
             <div class="section-title">My Assignments</div>
@@ -486,13 +477,11 @@
         <!-- CLIENT DASHBOARD -->
         <div id="client-dashboard" style="display:none;">
             <div class="profile-header">
-                <div class="profile-avatar" id="client-avatar">C</div>
-                <div class="profile-info">
-                    <h1 id="client-name">Client Name</h1>
-                    <div class="profile-contact"><strong>Email:</strong> <span id="client-email">client@email.com</span></div>
-                    <div class="profile-contact"><strong>Company:</strong> <span id="client-company">Your Company Name</span></div>
-                </div>
-                <button class="manage-btn" onclick="window.location.href='Jobs Listing Page.txt'">View Public Job Board</button>
+                 <div class="profile-avatar" id="client-profile-avatar-initial">U</div>
+                 <div class="profile-info">
+                    <h1 id="client-profile-name">Client Name</h1>
+                    <div class="profile-contact"><i class="fas fa-envelope"></i> <span id="client-profile-email">client@example.com</span></div>
+                 </div>
             </div>
             <div class="section-title">My Posted Jobs</div>
             <div class="dashboard-card">
@@ -562,6 +551,20 @@ function updateAuthDisplay(user, userData = {}) {
     const profileDropdownContainer = document.getElementById('profile-dropdown-container');
     const headerProfileAvatar = document.getElementById('header-profile-avatar');
 
+    // Profile page specific elements
+    const profileName = document.getElementById('profile-name');
+    const profileAvatarInitial = document.getElementById('profile-avatar-initial');
+    const profileEmail = document.getElementById('profile-email');
+    const profilePhone = document.getElementById('profile-phone');
+    const profileLocation = document.getElementById('profile-location');
+    
+    const clientProfileName = document.getElementById('client-profile-name');
+    const clientProfileAvatarInitial = document.getElementById('client-profile-avatar-initial');
+    const clientProfileEmail = document.getElementById('client-profile-email');
+
+    const agentDashboard = document.getElementById('agent-dashboard');
+    const clientDashboard = document.getElementById('client-dashboard');
+
     if (user) {
         if (signInLink) signInLink.style.display = 'none';
         if (postJobLink) {
@@ -572,27 +575,41 @@ function updateAuthDisplay(user, userData = {}) {
             const displayName = userData.displayName || user.displayName || "U";
             headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
         }
-        // Populate profile page fields
-        document.getElementById('profile-name').textContent = userData.displayName || user.displayName || "User Name";
-        document.getElementById('profile-avatar').textContent = (userData.displayName || user.displayName || "U")[0].toUpperCase();
-        document.getElementById('profile-email').textContent = userData.email || user.email || "";
-        document.getElementById('profile-phone').textContent = userData.phone || "";
-        document.getElementById('profile-location').textContent = userData.location || "";
 
-        document.getElementById('agent-dashboard').style.display = (userData.accountType === 'agent') ? '' : 'none';
-        document.getElementById('client-dashboard').style.display = (userData.accountType === 'client') ? '' : 'none';
+        const displayName = userData.displayName || user.displayName || "User";
+        const userInitial = displayName[0] ? displayName[0].toUpperCase() : "U";
 
-        if (userData.accountType === 'client') {
-            document.getElementById('client-name').textContent = userData.displayName || user.displayName || "Client Name";
-            document.getElementById('client-avatar').textContent = (userData.displayName || user.displayName || "C")[0].toUpperCase();
-            document.getElementById('client-email').textContent = userData.email || user.email || "";
-            document.getElementById('client-company').textContent = userData.companyName || "";
+        if (userData.accountType === 'agent') {
+            if (agentDashboard) agentDashboard.style.display = '';
+            if (clientDashboard) clientDashboard.style.display = 'none';
+            if (profileName) profileName.textContent = displayName;
+            if (profileAvatarInitial) profileAvatarInitial.textContent = userInitial;
+            if (profileEmail) profileEmail.textContent = userData.email || user.email || "";
+            if (profilePhone) profilePhone.textContent = userData.phone || "";
+            if (profileLocation) profileLocation.textContent = userData.location || "";
+        } else if (userData.accountType === 'client') {
+            if (agentDashboard) agentDashboard.style.display = 'none';
+            if (clientDashboard) clientDashboard.style.display = '';
+            if (clientProfileName) clientProfileName.textContent = displayName;
+            if (clientProfileAvatarInitial) clientProfileAvatarInitial.textContent = userInitial;
+            if (clientProfileEmail) clientProfileEmail.textContent = userData.email || user.email || "";
+        } else {
+            // Default view or redirect if accountType is unknown/not set
+            if (agentDashboard) agentDashboard.style.display = 'none'; // Or a generic view
+            if (clientDashboard) clientDashboard.style.display = 'none';
+             // Fallback to agent view or a generic message if account type is not set
+            if (profileName) profileName.textContent = displayName;
+            if (profileAvatarInitial) profileAvatarInitial.textContent = userInitial;
+            if (profileEmail) profileEmail.textContent = userData.email || user.email || "";
         }
 
     } else {
         if (signInLink) signInLink.style.display = 'inline-block';
         if (postJobLink) postJobLink.style.display = 'none';
         if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
+        
+        if (agentDashboard) agentDashboard.style.display = 'none';
+        if (clientDashboard) clientDashboard.style.display = 'none';
         window.location.href = "signin.html"; // Redirect if not signed in
     }
 }
@@ -611,9 +628,9 @@ async function loadProfile() {
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        loadProfile(); // This will call updateAuthDisplay internally
+        loadProfile(); 
     } else {
-        updateAuthDisplay(null); // Handles redirect and UI for signed-out state
+        updateAuthDisplay(null); 
     }
 });
 
@@ -622,8 +639,12 @@ if (typeof window !== "undefined") {
     if (dropdownSignOutLink) {
         dropdownSignOutLink.onclick = async function(e) {
             e.preventDefault();
-            await signOut(auth);
-            // onAuthStateChanged will handle UI update and redirect
+            try {
+                await signOut(auth);
+                // onAuthStateChanged will handle the UI update and redirect
+            } catch (error) {
+                console.error("Sign out error", error);
+            }
         };
     }
 }

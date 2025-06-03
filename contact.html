@@ -5,22 +5,52 @@
     <title>Contact | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* Add :root variables if not already present */
+        :root {
+            --primary-bg: #f7f5f0;
+            --accent-gold: #e6c77d;
+            --button-brown: #7a684a;
+            --text-black: #222222;
+            --white: #ffffff;
+            --soft-blue: #eaf0fa;
+            --shadow: 0 4px 24px #0002;
+        }
         body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%); color: #222; margin: 0; }
-        header, footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 4px 24px #0002; }
+        /* Standard header styles from index.html */
+        header {
+            position: sticky; top: 0; z-index: 10;
+            display: flex; align-items: center; padding: 24px 48px;
+            background: var(--white); box-shadow: var(--shadow);
+        }
+        .logo { font-size: 2.2em; font-weight: bold; color: var(--button-brown); letter-spacing: 1px; }
+        nav { margin-left: 40px; }
+        nav a { margin: 0 18px; text-decoration: none; color: var(--text-black); font-weight: 500; font-size: 1.08em; transition: color 0.2s; }
+        nav a.active, nav a:hover { color: var(--button-brown); border-bottom: 2px solid var(--accent-gold); padding-bottom: 4px; }
+        .auth-links { margin-left: auto; display: flex; align-items: center; }
+        .auth-links > a { margin-left: 24px; color: var(--button-brown); text-decoration: none; font-weight: 500; font-size: 1.05em; }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown { position: relative; display: inline-block; margin-left: 20px; }
+        .profile-icon-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--button-brown); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: bold; cursor: pointer; border: 1px solid var(--accent-gold); }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: var(--white); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 101; border-radius: 4px; margin-top: 5px; }
+        .dropdown-content a { color: var(--text-black); padding: 12px 16px; text-decoration: none; display: block; font-size: 0.95em; margin-left: 0; font-weight: normal; }
+        .dropdown-content a:hover { background-color: var(--soft-blue); color: var(--button-brown); }
+        .profile-dropdown:hover .dropdown-content,
+        .profile-dropdown .profile-icon-avatar:focus + .dropdown-content,
+        .profile-dropdown .dropdown-content:hover { display: block; }
+        .profile-icon-avatar:focus { outline: 2px solid var(--accent-gold); }
+        
         .container { max-width: 700px; margin: 20px auto; background: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 20px; }
         h1 { color: #7a684a; margin-bottom: 20px; }
         form { display: flex; flex-direction: column; gap: 15px; }
         label { font-weight: bold; color: #7a684a; }
         input[type="text"], input[type="email"], textarea { padding: 10px; border: 1px solid #e6c77d; border-radius: 4px; font-size: 1em; }
         textarea { resize: vertical; }
-        button { background: #e6c77d; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-size: 1em; }
+        button[type="submit"] { background: #e6c77d; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-size: 1em; }
         .contact-info { margin-top: 20px; font-size: 1em; }
         .contact-info p { margin: 5px 0; }
-        .logo { font-size: 1.5em; font-weight: bold; color: #7a684a; }
-        nav { margin: 10px 0; }
-        nav a { margin: 0 10px; text-decoration: none; color: #7a684a; }
-        nav a.active { text-decoration: underline; }
-        .auth-links a { margin: 0 10px; text-decoration: none; color: #7a684a; }
+        /* .logo class was simplified, ensure it matches the standard if used */
+        footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 -4px 24px #0002; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -35,8 +65,15 @@
         </nav>
         <div class="auth-links">
             <a href="signin.html" id="nav-signin-link">Sign in</a>
-            <a href="post-job.html">Post an Opportunity</a>
-            <a href="#" id="nav-signout-link" style="display:none;">Sign out</a>
+            <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+            <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
+                <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
+                <div class="dropdown-content">
+                    <a href="profile.html">Profile</a>
+                    <a href="edit-profile.html">Edit Profile</a>
+                    <a href="#" id="dropdown-signout-link">Sign Out</a>
+                </div>
+            </div>
         </div>
     </header>
     <main>
@@ -65,43 +102,60 @@
     </main>
     <footer>&copy; 2024 Work from Home with Shawn</footer>
     <script>
+// Standard auth display script (from index.html)
 document.addEventListener('DOMContentLoaded', function() {
-    function updateAuthLinks() {
+    function updateAuthDisplay(user, userData = {}) {
         const signInLink = document.getElementById('nav-signin-link');
-        const signOutLink = document.getElementById('nav-signout-link');
-        let isSignedIn = false;
-        if (window.firebaseAuth) {
-            isSignedIn = !!window.firebaseAuth.currentUser;
-        } else if (localStorage.getItem('signedIn') === 'true') {
-            isSignedIn = true;
-        }
-        if (isSignedIn) {
+        const postJobLink = document.getElementById('nav-post-job-link');
+        const profileDropdownContainer = document.getElementById('profile-dropdown-container');
+        const headerProfileAvatar = document.getElementById('header-profile-avatar');
+
+        if (user) {
             if (signInLink) signInLink.style.display = 'none';
-            if (signOutLink) signOutLink.style.display = 'inline-block';
+            if (postJobLink) {
+                postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
+            }
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+            if (headerProfileAvatar) {
+                const displayName = userData.displayName || (user && user.displayName) || "U";
+                headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+            }
         } else {
             if (signInLink) signInLink.style.display = 'inline-block';
-            if (signOutLink) signOutLink.style.display = 'none';
+            if (postJobLink) postJobLink.style.display = 'none';
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
         }
     }
-    updateAuthLinks();
-    if (window.firebaseAuthFunctions && window.firebaseAuth) {
-        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, updateAuthLinks);
-    }
-    const signOutLink = document.getElementById('nav-signout-link');
-    if (signOutLink) {
-        signOutLink.onclick = function(e) {
-            e.preventDefault();
-            if (window.firebaseAuthFunctions && window.firebaseAuth) {
-                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
-                    updateAuthLinks();
-                    window.location.href = "index.html";
-                });
+
+    if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
+        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
+            if (user) {
+                const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
+                const userDoc = await window.firebaseFirestoreFunctions.getDoc(userDocRef);
+                const userData = userDoc.exists() ? userDoc.data() : {};
+                updateAuthDisplay(user, userData);
             } else {
-                localStorage.setItem('signedIn', 'false');
-                updateAuthLinks();
-                window.location.href = "index.html";
+                updateAuthDisplay(null);
             }
-        };
+        });
+
+        const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
+        if (dropdownSignOutLink) {
+            dropdownSignOutLink.onclick = function(e) {
+                e.preventDefault();
+                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
+                    window.location.href = "index.html";
+                }).catch(error => {
+                    console.error("Sign out error:", error);
+                });
+            };
+        }
+    } else { 
+        console.warn("Firebase auth object not found on window. Auth links might not update dynamically. Using localStorage fallback.");
+        const localUserIsSignedIn = localStorage.getItem('signedIn') === 'true';
+        const localUser = localUserIsSignedIn ? { displayName: (JSON.parse(localStorage.getItem('userData') || '{}').displayName || 'User') } : null;
+        const localUserData = localUserIsSignedIn ? JSON.parse(localStorage.getItem('userData') || '{}') : {};
+        updateAuthDisplay(localUser, localUserData);
     }
 });
 </script>
