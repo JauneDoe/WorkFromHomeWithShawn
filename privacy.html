@@ -63,6 +63,7 @@
     <div class="auth-links">
         <a href="signin.html" id="nav-signin-link">Sign in</a>
         <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+        <!-- Profile Icon Dropdown -->
         <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
             <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
             <div class="dropdown-content">
@@ -108,19 +109,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const headerProfileAvatar = document.getElementById('header-profile-avatar');
 
         if (user) {
-            if (signInLink) signInLink.style.display = 'none';
+            if (signInLink) signInLink.style.display = 'none'; // Hides "Sign in"
             if (postJobLink) {
                 postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
             }
-            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block'; // Shows profile icon
             if (headerProfileAvatar) {
-                const displayName = userData.displayName || (user && user.displayName) || "U";
+                const displayName = userData.displayName || user.displayName || "U";
                 headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
             }
         } else {
-            if (signInLink) signInLink.style.display = 'inline-block';
+            if (signInLink) signInLink.style.display = 'inline-block'; // Shows "Sign in"
             if (postJobLink) postJobLink.style.display = 'none';
-            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none'; // Hides profile icon
         }
     }
 

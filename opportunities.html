@@ -98,6 +98,44 @@
             color: #7a684a;
             font-weight: bold;
         }
+
+        /* Profile Dropdown styles */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .profile-icon-avatar {
+            width: 36px;
+            height: 36px;
+            background: #7a684a;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+        }
+        .profile-dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content a {
+            color: #222;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #e6c77d;
+        }
     </style>
 </head>
 <body>
@@ -113,8 +151,16 @@
     </nav>
     <div class="auth-links">
         <a href="signin.html" id="nav-signin-link">Sign in</a>
-        <a href="post-job.html" id="nav-post-job-link">Post an Opportunity</a>
-        <a href="#" id="nav-signout-link" style="display:none;">Sign out</a>
+        <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+        <!-- Profile Icon Dropdown -->
+        <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
+            <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
+            <div class="dropdown-content">
+                <a href="profile.html">Profile</a>
+                <a href="edit-profile.html">Edit Profile</a>
+                <a href="#" id="dropdown-signout-link">Sign Out</a>
+            </div>
+        </div>
     </div>
 </header>
 <main>
@@ -181,7 +227,29 @@ function applyFilters() {
     console.log("Filtering jobs...");
 }
 
-// --- Auth Links Show/Hide Logic ---
+function updateAuthDisplay(user, userData = {}) {
+    const signInLink = document.getElementById('nav-signin-link');
+    const postJobLink = document.getElementById('nav-post-job-link');
+    const profileDropdownContainer = document.getElementById('profile-dropdown-container');
+    const headerProfileAvatar = document.getElementById('header-profile-avatar');
+
+    if (user) {
+        if (signInLink) signInLink.style.display = 'none'; // Hides "Sign in"
+        if (postJobLink) {
+            postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
+        }
+        if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block'; // Shows profile icon
+        if (headerProfileAvatar) {
+            const displayName = userData.displayName || user.displayName || "U";
+            headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+        }
+    } else {
+        if (signInLink) signInLink.style.display = 'inline-block'; // Shows "Sign in"
+        if (postJobLink) postJobLink.style.display = 'none';
+        if (profileDropdownContainer) profileDropdownContainer.style.display = 'none'; // Hides profile icon
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     function updateAuthLinks() {
         const signInLink = document.getElementById('nav-signin-link');
@@ -222,6 +290,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = "index.html";
             }
         };
+    }
+
+    if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
+        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
+            if (user) {
+                const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
+                const userDoc = await window.firebaseFirestoreFunctions.getDoc(userDocRef);
+                const userData = userDoc.exists() ? userDoc.data() : {};
+                updateAuthDisplay(user, userData);
+            } else {
+                updateAuthDisplay(null);
+            }
+        });
     }
 });
 

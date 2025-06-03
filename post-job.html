@@ -50,7 +50,8 @@
     </nav>
     <div class="auth-links">
         <a href="signin.html" id="nav-signin-link">Sign in</a>
-        <a href="post-job.html" class="active" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+        <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+        <!-- Profile Icon Dropdown -->
         <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
             <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
             <div class="dropdown-content">
@@ -102,28 +103,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const postJobLink = document.getElementById('nav-post-job-link');
         const profileDropdownContainer = document.getElementById('profile-dropdown-container');
         const headerProfileAvatar = document.getElementById('header-profile-avatar');
-        const postJobContainer = document.getElementById('postJobContainer');
 
         if (user) {
-            if (signInLink) signInLink.style.display = 'none';
+            if (signInLink) signInLink.style.display = 'none'; // Hides "Sign in"
             if (postJobLink) {
-                // User must be 'client' to see "Post an Opportunity" and access the form
-                const canPost = userData.accountType === 'client';
-                postJobLink.style.display = canPost ? 'inline-block' : 'none';
-                if (!canPost && postJobContainer) { // If not client, redirect or hide form
-                     window.location.href = "profile.html"; // Or show an error message
-                }
+                postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
             }
-            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block'; // Shows profile icon
             if (headerProfileAvatar) {
                 const displayName = userData.displayName || user.displayName || "U";
                 headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
             }
-        } else { // Not signed in
-            if (signInLink) signInLink.style.display = 'inline-block';
+        } else {
+            if (signInLink) signInLink.style.display = 'inline-block'; // Shows "Sign in"
             if (postJobLink) postJobLink.style.display = 'none';
-            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
-            if (postJobContainer) window.location.href = "signin.html"; // Redirect to signin if trying to access post-job
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none'; // Hides profile icon
         }
     }
 
@@ -135,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const userData = userDoc.exists() ? userDoc.data() : {};
                 updateAuthDisplay(user, userData);
             } else {
-                updateAuthDisplay(null); // This will trigger redirection if on post-job page
+                updateAuthDisplay(null);
             }
         });
 
