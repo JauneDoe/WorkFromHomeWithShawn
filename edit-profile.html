@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile | Work from Home with Shawn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f7f5f0; color: #222; margin: 0; }
+        .container { max-width: 500px; margin: 60px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px #0002; padding: 40px 32px; }
+        h2 { text-align: center; color: #7a684a; margin-bottom: 24px; font-weight: bold; }
+        label { font-weight: 500; color: #7a684a; margin-bottom: 6px; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 18px; border: 1px solid #e6c77d; border-radius: 6px; }
+        button { background: #7a684a; color: #fff; border: none; border-radius: 6px; padding: 14px 0; width: 100%; font-size: 1.08em; font-weight: 600; cursor: pointer; }
+        .error { color: #d32f2f; text-align: center; margin-bottom: 10px; }
+        .success { color: #2e7d32; text-align: center; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Profile</h2>
+        <div id="msg"></div>
+        <form id="edit-profile-form">
+            <label for="displayName">Full Name</label>
+            <input type="text" id="displayName" name="displayName" required>
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location">
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko",
+            authDomain: "workwithshawnauth.firebaseapp.com",
+            projectId: "workwithshawnauth",
+            storageBucket: "workwithshawnauth.firebasestorage.app",
+            messagingSenderId: "38163174001",
+            appId: "1:38163174001:web:45a352c8da0112bcfe41d0"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const form = document.getElementById('edit-profile-form');
+        const msgDiv = document.getElementById('msg');
+        let currentUser = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "signin.html";
+                return;
+            }
+            currentUser = user;
+            // Prefill fields from Firestore if available
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            const data = userDoc.exists() ? userDoc.data() : {};
+            form.displayName.value = data.displayName || user.displayName || "";
+            form.phone.value = data.phone || "";
+            form.location.value = data.location || "";
+        });
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            msgDiv.textContent = "";
+            msgDiv.className = "";
+            if (!currentUser) return;
+            const displayName = form.displayName.value.trim();
+            const phone = form.phone.value.trim();
+            const location = form.location.value.trim();
+            try {
+                await updateProfile(currentUser, { displayName });
+                await setDoc(doc(db, "users", currentUser.uid), { displayName, phone, location }, { merge: true });
+                msgDiv.textContent = "Profile updated!";
+                msgDiv.className = "success";
+                setTimeout(() => window.location.href = "profile.html", 1200);
+            } catch (err) {
+                msgDiv.textContent = err.message;
+                msgDiv.className = "error";
+            }
+        };
+    </script>
+</body>
+</html>
