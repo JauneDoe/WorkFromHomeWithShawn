@@ -292,8 +292,8 @@
                         </div>
                     </div>
                     <div class="form-navigation">
-                        <button type="button" id="prevBtn" onclick="nextPrev(-1)" disabled>Previous</button>
-                        <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                        <button type="button" id="prevBtn">Previous</button> <!-- Removed onclick -->
+                        <button type="button" id="nextBtn">Next</button> <!-- Removed onclick -->
                     </div>
                     <button type="submit" class="submit-btn" style="display:none; margin-top: 20px;" id="submitAppBtn">Submit Application</button>
                 </form>
@@ -311,208 +311,240 @@
     <footer>
         &copy; 2024 Work from Home with Shawn
     </footer>
-    <script>
-    let currentStep = 0;
-    const steps = document.getElementsByClassName("form-step");
-    const stepIndicatorContainer = document.getElementById("stepIndicatorContainer");
-    for (let i = 0; i < steps.length; i++) {
-        const indicator = document.createElement("span");
-        indicator.classList.add("step-indicator");
-        indicator.setAttribute("id", "indicator" + i);
-        stepIndicatorContainer.appendChild(indicator);
-    }
-    showStep(currentStep);
-    function updateStepIndicator(n) {
-        const indicators = document.getElementsByClassName("step-indicator");
-        Array.from(indicators).forEach((indicator, i) => {
-            indicator.classList.remove("active", "finished");
-            if (i < n) {
-                indicator.classList.add("finished");
-            } else if (i === n) {
-                indicator.classList.add("active");
-            }
-        });
-    }
-    function validateStep(stepIndex) { return true; }
-    function showStep(n) {
-        if (steps.length === 0) return;
-        Array.from(steps).forEach(step => {
-            step.style.display = "none";
-            step.classList.remove("active");
-        });
-        steps[n].style.display = "flex";
-        steps[n].classList.add("active");
-        document.getElementById("prevBtn").disabled = (n === 0);
-        if (n === (steps.length - 1)) {
-            document.getElementById("nextBtn").style.display = "none";
-            document.getElementById("submitAppBtn").style.display = "inline-block";
-        } else {
-            document.getElementById("nextBtn").innerHTML = "Next";
-            document.getElementById("nextBtn").style.display = "inline-block";
-            document.getElementById("submitAppBtn").style.display = "none";
-        }
-        updateStepIndicator(n);
-    }
-    function nextPrev(n) {
-        if (n === 1 && !validateStep(currentStep)) { return false; }
-        currentStep = currentStep + n;
-        if (currentStep >= steps.length) { return false; }
-        showStep(currentStep);
-    }
-    document.getElementById('jobAppForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        var form = e.target;
-        var formData = new FormData(form);
-        var resumeFile = formData.get('resume');
-        if (!resumeFile) {
-            alert('Please upload your resume.');
-            return;
-        }
-        var reader = new FileReader();
-        reader.onload = async function(evt) {
-            var base64Resume = evt.target.result.split(',')[1];
-            var params = {};
-            formData.forEach((value, key) => {
-                params[key] = value;
-            });
-            params['resume'] = base64Resume;
-            params['resumeName'] = resumeFile.name;
-            params['resumeType'] = resumeFile.type;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-            // --- Update user profile in Firebase if signed in ---
-            if (window.firebaseAuth && window.firebaseAuth.currentUser && window.firebaseFirestoreFunctions && window.firebaseDB) {
-                try {
-                    const user = window.firebaseAuth.currentUser;
-                    const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
-                    // Save all form fields to user profile
-                    const userUpdate = {
-                        displayName: params.fullName || user.displayName || "",
-                        email: params.email || user.email || "",
-                        phone: params.phone || "",
-                        street: params.street || "",
-                        cityStateZip: params.cityStateZip || "",
-                        dob: params.dob || "",
-                        scheduleType: params.scheduleType || "",
-                        laptop: params.laptop || "",
-                        hardwired: params.hardwired || "",
-                        quiet: params.quiet || "",
-                        wfhBefore: params.wfhBefore || "",
-                        workHistory: params.workHistory || "",
-                        convicted: params.convicted || "",
-                        convictionDetails: params.convictionDetails || "",
-                        restrictedState: params.restrictedState || "",
-                        otherInfo: params.otherInfo || "",
-                        zoomDate: params.zoomDate || "",
-                        accountType: "agent" // Set account type if needed
-                    };
-                    await window.firebaseFirestoreFunctions.setDoc(userDocRef, userUpdate, { merge: true });
-                } catch (err) {
-                    alert("Could not update your account profile: " + err.message);
-                }
-            } else {
-                // Optionally, store in localStorage for demo/non-auth users
-                if (localStorage.getItem('signedIn') === 'true') {
-                    localStorage.setItem('userData', JSON.stringify({
-                        displayName: params.fullName,
-                        email: params.email,
-                        phone: params.phone,
-                        street: params.street,
-                        cityStateZip: params.cityStateZip,
-                        dob: params.dob,
-                        scheduleType: params.scheduleType,
-                        laptop: params.laptop,
-                        hardwired: params.hardwired,
-                        quiet: params.quiet,
-                        wfhBefore: params.wfhBefore,
-                        workHistory: params.workHistory,
-                        convicted: params.convicted,
-                        convictionDetails: params.convictionDetails,
-                        restrictedState: params.restrictedState,
-                        otherInfo: params.otherInfo,
-                        zoomDate: params.zoomDate,
-                        accountType: "agent"
-                    }));
-                }
-            }
-
-            // ...existing code for submitting the application...
-            var query = new URLSearchParams(params).toString();
-            fetch(form.action, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: query
-            })
-            .then(response => response.text())
-            .then(msg => {
-                alert(msg);
-                form.reset();
-            })
-            .catch(() => alert('There was an error submitting your application.'));
+        // Ensure this configuration is correct for your Firebase project
+        const firebaseConfig = {
+            apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko", // Replace with your actual API key
+            authDomain: "workwithshawnauth.firebaseapp.com",
+            projectId: "workwithshawnauth",
+            storageBucket: "workwithshawnauth.firebasestorage.app",
+            messagingSenderId: "38163174001",
+            appId: "1:38163174001:web:45a352c8da0112bcfe41d0"
         };
-        reader.readAsDataURL(resumeFile);
-    });
 
-    // Auth display script (copied from index.html, ensure Firebase objects are available if needed)
-document.addEventListener('DOMContentLoaded', function() {
-    // Add redirectAfterLogin logic for Sign in link
-    const signInLink = document.getElementById('nav-signin-link');
-    if (signInLink) {
-        signInLink.addEventListener('click', function() {
-            localStorage.setItem('redirectAfterLogin', window.location.pathname);
-        });
-    }
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    function updateAuthDisplay(user, userData = {}) {
-        const signInLink = document.getElementById('nav-signin-link');
-        const postJobLink = document.getElementById('nav-post-job-link');
-        const profileDropdownContainer = document.getElementById('profile-dropdown-container');
-        const headerProfileAvatar = document.getElementById('header-profile-avatar');
+        let currentStep = 0;
+        const steps = document.getElementsByClassName("form-step");
+        const stepIndicatorContainer = document.getElementById("stepIndicatorContainer");
 
-        if (user) {
-            if (signInLink) signInLink.style.display = 'none'; // Hides "Sign in"
-            if (postJobLink) {
-                postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
-            }
-            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block'; // Shows profile icon
-            if (headerProfileAvatar) {
-                const displayName = userData.displayName || user.displayName || "U";
-                headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
-            }
-        } else {
-            if (signInLink) signInLink.style.display = 'inline-block'; // Shows "Sign in"
-            if (postJobLink) postJobLink.style.display = 'none';
-            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none'; // Hides profile icon
+        function updateStepIndicator(n) {
+            const indicators = document.getElementsByClassName("step-indicator");
+            Array.from(indicators).forEach((indicator, i) => {
+                indicator.classList.remove("active", "finished");
+                if (i < n) {
+                    indicator.classList.add("finished");
+                } else if (i === n) {
+                    indicator.classList.add("active");
+                }
+            });
         }
-    }
 
-    if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
-        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
-            if (user) {
-                const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
-                const userDoc = await window.firebaseFirestoreFunctions.getDoc(userDocRef);
-                const userData = userDoc.exists() ? userDoc.data() : {};
-                updateAuthDisplay(user, userData);
+        function validateStep(stepIndex) {
+            // Add actual validation logic per step if needed
+            return true;
+        }
+
+        function showStep(n) {
+            if (steps.length === 0) return;
+            Array.from(steps).forEach(step => {
+                step.style.display = "none";
+                step.classList.remove("active");
+            });
+            steps[n].style.display = "flex";
+            steps[n].classList.add("active");
+
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
+            const submitAppBtn = document.getElementById("submitAppBtn");
+
+            if (prevBtn) prevBtn.disabled = (n === 0);
+            
+            if (n === (steps.length - 1)) {
+                if (nextBtn) nextBtn.style.display = "none";
+                if (submitAppBtn) submitAppBtn.style.display = "inline-block";
             } else {
-                updateAuthDisplay(null);
+                if (nextBtn) {
+                    nextBtn.innerHTML = "Next";
+                    nextBtn.style.display = "inline-block";
+                }
+                if (submitAppBtn) submitAppBtn.style.display = "none";
             }
-        });
+            updateStepIndicator(n);
+        }
 
-        const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
-        if (dropdownSignOutLink) {
-            dropdownSignOutLink.onclick = function(e) {
-                e.preventDefault();
-                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
-                    window.location.href = "index.html";
+        function nextPrev(n) {
+            if (n === 1 && !validateStep(currentStep)) { return false; }
+            currentStep = currentStep + n;
+            if (currentStep >= steps.length) {
+                // This case should ideally be handled by the submit button visibility
+                // For safety, prevent going beyond the last step via nextPrev
+                currentStep = steps.length -1; 
+                return false; 
+            }
+            if (currentStep < 0) {
+                currentStep = 0; // Prevent going before the first step
+                return false;
+            }
+            showStep(currentStep);
+        }
+
+        document.getElementById('jobAppForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var formData = new FormData(form);
+            var resumeFile = formData.get('resume');
+            if (!resumeFile) {
+                alert('Please upload your resume.');
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = async function(evt) {
+                var base64Resume = evt.target.result.split(',')[1];
+                var params = {};
+                formData.forEach((value, key) => {
+                    params[key] = value;
+                });
+                params['resume'] = base64Resume;
+                params['resumeName'] = resumeFile.name;
+                params['resumeType'] = resumeFile.type;
+
+                if (auth.currentUser) {
+                    try {
+                        const user = auth.currentUser;
+                        const userDocRef = doc(db, "users", user.uid);
+                        const userUpdate = {
+                            displayName: params.fullName || user.displayName || "",
+                            email: params.email || user.email || "", // Email from form, fallback to auth user
+                            phone: params.phone || "",
+                            street: params.street || "",
+                            cityStateZip: params.cityStateZip || "",
+                            dob: params.dob || "",
+                            scheduleType: params.scheduleType || "",
+                            laptop: params.laptop || "",
+                            hardwired: params.hardwired || "",
+                            quiet: params.quiet || "",
+                            wfhBefore: params.wfhBefore || "",
+                            workHistory: params.workHistory || "",
+                            convicted: params.convicted || "",
+                            convictionDetails: params.convictionDetails || "",
+                            restrictedState: params.restrictedState || "",
+                            otherInfo: params.otherInfo || "",
+                            zoomDate: params.zoomDate || "",
+                            accountType: "agent" // Explicitly set or confirm account type
+                        };
+                        await setDoc(userDocRef, userUpdate, { merge: true });
+                        alert("Profile data saved with application.");
+                    } catch (err) {
+                        console.error("Error updating profile in Firestore: ", err);
+                        alert("Could not update your account profile: " + err.message);
+                    }
+                } else {
+                    alert("You must be signed in to submit an application and save profile data.");
+                    // Optionally, handle non-signed-in user data (e.g., localStorage)
+                    // For now, we assume application requires sign-in to save profile data to Firestore.
+                }
+
+                var query = new URLSearchParams(params).toString();
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: query
+                })
+                .then(response => response.text())
+                .then(msg => {
+                    alert("Application Submission: " + msg); // Differentiate alerts
+                    form.reset();
+                    currentStep = 0; // Reset to first step
+                    showStep(currentStep);
+                })
+                .catch((err) => {
+                    console.error("Error submitting application form: ", err);
+                    alert('There was an error submitting your application.');
                 });
             };
+            reader.readAsDataURL(resumeFile);
+        });
+
+        function updateAuthDisplay(user, userData = {}) {
+            const signInLink = document.getElementById('nav-signin-link');
+            const postJobLink = document.getElementById('nav-post-job-link');
+            const profileDropdownContainer = document.getElementById('profile-dropdown-container');
+            const headerProfileAvatar = document.getElementById('header-profile-avatar');
+
+            if (user) {
+                if (signInLink) signInLink.style.display = 'none';
+                if (postJobLink) {
+                    postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
+                }
+                if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+                if (headerProfileAvatar) {
+                    const displayName = userData.displayName || user.displayName || "U";
+                    headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+                }
+                 // Pre-fill form if user is signed in and data exists
+                if (document.getElementById('fullName') && userData.displayName) document.getElementById('fullName').value = userData.displayName;
+                if (document.getElementById('email') && (user.email || userData.email)) document.getElementById('email').value = user.email || userData.email;
+                if (document.getElementById('phone') && userData.phone) document.getElementById('phone').value = userData.phone;
+                // Pre-fill other fields from userData if desired
+            } else {
+                if (signInLink) signInLink.style.display = 'inline-block';
+                if (postJobLink) postJobLink.style.display = 'none';
+                if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
+            }
         }
-    } else {
-        console.warn("Firebase auth object not found on window for apply.html. Auth links might not update dynamically.");
-        const localUser = localStorage.getItem('signedIn') === 'true' ? { displayName: 'User' } : null;
-        const localUserData = localUser ? JSON.parse(localStorage.getItem('userData') || '{}') : {};
-        updateAuthDisplay(localUser, localUserData);
-    }
-});
+        
+        // DOMContentLoaded to ensure elements are loaded before attaching listeners or manipulating DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            for (let i = 0; i < steps.length; i++) {
+                const indicator = document.createElement("span");
+                indicator.classList.add("step-indicator");
+                indicator.setAttribute("id", "indicator" + i);
+                if (stepIndicatorContainer) stepIndicatorContainer.appendChild(indicator);
+            }
+            showStep(currentStep); // Initial display of the first step
+
+            const prevButton = document.getElementById('prevBtn');
+            const nextButton = document.getElementById('nextBtn');
+            if(prevButton) prevButton.addEventListener('click', () => nextPrev(-1));
+            if(nextButton) nextButton.addEventListener('click', () => nextPrev(1));
+
+            const signInLink = document.getElementById('nav-signin-link');
+            if (signInLink) {
+                signInLink.addEventListener('click', function() {
+                    localStorage.setItem('redirectAfterLogin', window.location.pathname);
+                });
+            }
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    const userDocRef = doc(db, "users", user.uid);
+                    const userDocSnap = await getDoc(userDocRef);
+                    const userData = userDocSnap.exists() ? userDocSnap.data() : {};
+                    updateAuthDisplay(user, userData);
+                } else {
+                    updateAuthDisplay(null);
+                }
+            });
+
+            const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
+            if (dropdownSignOutLink) {
+                dropdownSignOutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    signOut(auth).then(() => {
+                        window.location.href = "index.html";
+                    }).catch((error) => {
+                        console.error("Sign out error", error);
+                    });
+                });
+            }
+        });
     </script>
 </body>
 </html>
