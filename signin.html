@@ -78,7 +78,19 @@
     </style>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            updateProfile 
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko",
             authDomain: "workwithshawnauth.firebaseapp.com",
@@ -89,22 +101,127 @@
         };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        window.onload = () => {
+        const db = getFirestore(app);
+
+        window.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('auth-form');
             const errorDiv = document.getElementById('error-msg');
-            form.onsubmit = async (e) => {
+            const displayNameField = document.getElementById('displayNameField');
+            const companyField = document.getElementById('companyField');
+            const accountTypeField = document.getElementById('accountTypeField');
+            const phoneField = document.getElementById('phoneField');
+            const locationField = document.getElementById('locationField');
+            const formTitle = document.getElementById('form-title');
+            const submitBtn = document.getElementById('submit-btn');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const toggle = document.getElementById('toggle-auth');
+            let isSignUp = false;
+
+            function setAuthState(signUpState) {
+                isSignUp = signUpState;
+                formTitle.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+                submitBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+                toggle.textContent = isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up";
+                displayNameField.style.display = isSignUp ? 'flex' : 'none';
+                accountTypeField.style.display = isSignUp ? 'flex' : 'none';
+                phoneField.style.display = isSignUp ? 'flex' : 'none';
+                locationField.style.display = isSignUp ? 'flex' : 'none';
+                companyField.style.display = (isSignUp && getSelectedAccountType() === 'client') ? 'flex' : 'none';
+                errorDiv.textContent = '';
+                setTimeout(() => {
+                    if (isSignUp && displayNameField.querySelector('input')) {
+                        displayNameField.querySelector('input').focus();
+                    } else if (emailInput) {
+                        emailInput.focus();
+                    }
+                }, 0);
+            }
+            function getSelectedAccountType() {
+                const checked = form.querySelector('input[name="accountType"]:checked');
+                return checked ? checked.value : 'agent';
+            }
+            form.addEventListener('change', function(e) {
+                if (isSignUp && e.target.name === 'accountType') {
+                    companyField.style.display = (getSelectedAccountType() === 'client') ? 'flex' : 'none';
+                }
+            });
+
+            setAuthState(false);
+
+            toggle.onclick = function(e) {
+                e.preventDefault();
+                setAuthState(!isSignUp);
+            };
+
+            form.onsubmit = async function(e) {
                 e.preventDefault();
                 errorDiv.textContent = '';
-                const email = form.email.value.trim();
-                const password = form.password.value.trim();
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                const displayName = isSignUp && form.displayName ? form.displayName.value.trim() : "";
+                const accountType = isSignUp ? getSelectedAccountType() : null;
+                const companyName = isSignUp && accountType === 'client' && form.companyName ? form.companyName.value.trim() : "";
+                const phone = isSignUp && form.phone ? form.phone.value.trim() : "";
+                const location = isSignUp && form.location ? form.location.value.trim() : "";
+
+                if (isSignUp) {
+                    if (!displayName) {
+                        errorDiv.textContent = "Please enter your full name.";
+                        return;
+                    }
+                    if (password.length < 6) {
+                        errorDiv.textContent = "Password should be at least 6 characters.";
+                        return;
+                    }
+                    if (!phone) {
+                        errorDiv.textContent = "Please enter your phone number.";
+                        return;
+                    }
+                    if (!location) {
+                        errorDiv.textContent = "Please enter your location.";
+                        return;
+                    }
+                    if (accountType === 'client' && !companyName) {
+                        errorDiv.textContent = "Please enter your company name.";
+                        return;
+                    }
+                }
+
                 try {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    window.location.href = "profile.html";
+                    if (isSignUp) {
+                        // Create user
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        await updateProfile(userCredential.user, { displayName: displayName });
+                        // Save extra info to Firestore
+                        const userDocRef = doc(db, "users", userCredential.user.uid);
+                        await setDoc(userDocRef, {
+                            email: userCredential.user.email,
+                            displayName: displayName,
+                            accountType: accountType,
+                            companyName: accountType === 'client' ? companyName : "",
+                            phone: phone,
+                            location: location,
+                            createdAt: serverTimestamp(),
+                            updatedAt: serverTimestamp()
+                        }, { merge: true });
+                        window.location.href = "profile.html";
+                    } else {
+                        await signInWithEmailAndPassword(auth, email, password);
+                        window.location.href = "profile.html";
+                    }
                 } catch (err) {
-                    errorDiv.textContent = err.message.replace('Firebase: ', '');
+                    // Show friendlier error for invalid-credential
+                    if (err.code === "auth/invalid-credential" || err.code === "auth/invalid-email" || err.code === "auth/user-not-found") {
+                        errorDiv.textContent = "Invalid email or password.";
+                    } else if (err.code === "auth/email-already-in-use") {
+                        errorDiv.textContent = "This email is already registered.";
+                    } else {
+                        errorDiv.textContent = err.message.replace('Firebase: ', '');
+                    }
                 }
             };
-        };
+        });
     </script>
 </head>
 <body>
@@ -248,17 +365,38 @@
                 }
             }
 
-            // Use your Firebase auth logic here, as in !DOCTYPE html.txt
-            // Example:
-            // try {
-            //     if (isSignUp) {
-            //         // createUserWithEmailAndPassword, updateProfile, save accountType, companyName, phone, location to Firestore
-            //     } else {
-            //         // signInWithEmailAndPassword
-            //     }
-            // } catch (err) {
-            //     errorDiv.textContent = err.message.replace('Firebase: ', '');
-            // }
+            try {
+                if (isSignUp) {
+                    // Create user
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await updateProfile(userCredential.user, { displayName: displayName });
+                    // Save extra info to Firestore
+                    const userDocRef = doc(db, "users", userCredential.user.uid);
+                    await setDoc(userDocRef, {
+                        email: userCredential.user.email,
+                        displayName: displayName,
+                        accountType: accountType,
+                        companyName: accountType === 'client' ? companyName : "",
+                        phone: phone,
+                        location: location,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    }, { merge: true });
+                    window.location.href = "profile.html";
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    window.location.href = "profile.html";
+                }
+            } catch (err) {
+                // Show friendlier error for invalid-credential
+                if (err.code === "auth/invalid-credential" || err.code === "auth/invalid-email" || err.code === "auth/user-not-found") {
+                    errorDiv.textContent = "Invalid email or password.";
+                } else if (err.code === "auth/email-already-in-use") {
+                    errorDiv.textContent = "This email is already registered.";
+                } else {
+                    errorDiv.textContent = err.message.replace('Firebase: ', '');
+                }
+            }
         };
     });
     </script>
