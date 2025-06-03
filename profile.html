@@ -480,21 +480,67 @@
             &copy; 2024 Work from Home with Shawn. All rights reserved.
         </div>
     </footer>
-    <script>
-    // Account type display logic (no switcher in profile, just show correct dashboard)
-    // You should set this value based on user data from your backend/auth/profile
-    // For demo, default to agent. Replace this logic with your real user data.
-    (function() {
-        // Example: fetch account type from localStorage or backend
-        // let accountType = localStorage.getItem('accountType') || 'agent';
-        let accountType = 'agent'; // Default, replace with real value
+    <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // If you have user data, set accountType = user.accountType;
-        // For demo, you can manually set to 'client' to test
+const firebaseConfig = {
+    apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko",
+    authDomain: "workwithshawnauth.firebaseapp.com",
+    projectId: "workwithshawnauth",
+    storageBucket: "workwithshawnauth.firebasestorage.app",
+    messagingSenderId: "38163174001",
+    appId: "1:38163174001:web:45a352c8da0112bcfe41d0"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-        document.getElementById('agent-dashboard').style.display = (accountType === 'agent') ? '' : 'none';
-        document.getElementById('client-dashboard').style.display = (accountType === 'client') ? '' : 'none';
-    })();
+async function loadProfile() {
+    const user = auth.currentUser;
+    if (!user) {
+        window.location.href = "signin.html";
+        return;
+    }
+    // Get Firestore user doc
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    let data = userDoc.exists() ? userDoc.data() : {};
+    // Fallback to auth if Firestore missing
+    const displayName = data.displayName || user.displayName || "User Name";
+    const email = data.email || user.email || "";
+    const phone = data.phone || "";
+    const location = data.location || "";
+    const accountType = data.accountType || "agent";
+    const companyName = data.companyName || "";
+
+    // Agent fields
+    document.getElementById('profile-name').textContent = displayName;
+    document.getElementById('profile-avatar').textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+    document.getElementById('profile-email').textContent = email;
+    document.getElementById('profile-phone').textContent = phone;
+    document.getElementById('profile-location').textContent = location;
+
+    // Show correct dashboard
+    document.getElementById('agent-dashboard').style.display = (accountType === 'agent') ? '' : 'none';
+    document.getElementById('client-dashboard').style.display = (accountType === 'client') ? '' : 'none';
+
+    // Client fields
+    if (accountType === 'client') {
+        document.getElementById('client-name').textContent = displayName;
+        document.getElementById('client-avatar').textContent = displayName[0] ? displayName[0].toUpperCase() : "C";
+        document.getElementById('client-email').textContent = email;
+        document.getElementById('client-company').textContent = companyName;
+    }
+}
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loadProfile();
+    } else {
+        window.location.href = "signin.html";
+    }
+});
     </script>
 </body>
 </html>
