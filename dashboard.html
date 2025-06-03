@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Account | Work from Home with Shawn</title>
+    <title>Sign In / Sign Up | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
@@ -17,24 +17,24 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(90deg, var(--accent-gold) 0%, var(--soft-blue) 100%);
-            color: var(--text-black);
+            background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%);
+            color: #222;
             min-height: 100vh;
         }
         header {
             position: sticky; top: 0; z-index: 10;
             display: flex; align-items: center; padding: 24px 48px;
-            background: var(--white); box-shadow: var(--shadow);
+            background: #fff; box-shadow: 0 4px 24px #0002;
         }
         .logo {
-            font-size: 2.2em; font-weight: bold; color: var(--button-brown); letter-spacing: 1px;
+            font-size: 2.2em; font-weight: bold; color: #7a684a; letter-spacing: 1px;
         }
         nav { margin-left: 40px; }
         nav a {
-            margin: 0 18px; text-decoration: none; color: var(--text-black); font-weight: 500; font-size: 1.08em; transition: color 0.2s;
+            margin: 0 18px; text-decoration: none; color: #222; font-weight: 500; font-size: 1.08em; transition: color 0.2s;
         }
         nav a.active, nav a:hover {
-            color: var(--button-brown); border-bottom: 2px solid var(--accent-gold); padding-bottom: 4px;
+            color: #7a684a; border-bottom: 2px solid #e6c77d; padding-bottom: 4px;
         }
         .main-bg {
             min-height: 100vh;
@@ -44,11 +44,11 @@
             padding: 40px 0;
         }
         .container {
-            max-width: 600px;
+            max-width: 400px;
             width: 100%;
-            background: var(--white);
+            background: #fff;
             border-radius: 16px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 24px #0002;
             padding: 40px 32px 32px 32px;
             margin: 40px 0;
             display: flex;
@@ -58,7 +58,7 @@
         h2 {
             text-align: center;
             margin-bottom: 18px;
-            color: var(--button-brown);
+            color: #7a684a;
             font-size: 2em;
             font-weight: bold;
         }
@@ -67,36 +67,28 @@
             flex-direction: column;
             width: 100%;
         }
-        .form-step {
-            display: none;
-            flex-direction: column;
-            gap: 18px;
-        }
-        .form-step.active {
-            display: flex;
-        }
         label {
             margin-bottom: 6px;
             font-weight: 500;
-            color: var(--button-brown);
+            color: #7a684a;
         }
-        input[type="email"], input[type="password"], input[type="text"], input[type="tel"], input[type="date"], textarea, input[type="file"] {
+        input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
             padding: 12px;
-            border: 1px solid var(--accent-gold);
+            border: 1px solid #e6c77d;
             border-radius: 6px;
             margin-bottom: 18px;
             font-size: 1.08em;
-            background: var(--white);
-            color: var(--text-black);
+            background: #fff;
+            color: #222;
             transition: border 0.2s;
         }
-        input:focus, textarea:focus {
-            border-color: var(--button-brown);
+        input:focus {
+            border-color: #7a684a;
             outline: none;
         }
-        button, .submit-btn {
-            background: var(--button-brown);
-            color: var(--white);
+        button {
+            background: #7a684a;
+            color: #fff;
             border: none;
             border-radius: 6px;
             padding: 14px 0;
@@ -107,37 +99,23 @@
             box-shadow: 0 2px 8px #0001;
             transition: background 0.2s;
         }
-        button:hover, .submit-btn:hover {
+        button:hover {
             background: #5e513a;
         }
-        .form-navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-        .form-navigation button:disabled {
-            background: #ccc;
-            color: #888;
-            cursor: not-allowed;
-        }
-        .step-indicator-container {
+        .links {
             text-align: center;
-            margin-bottom: 20px;
+            margin-top: 18px;
         }
-        .step-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #ccc;
-            margin: 0 5px;
-            transition: background-color 0.3s ease;
+        .links a {
+            color: #7a684a;
+            text-decoration: none;
+            margin: 0 8px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
         }
-        .step-indicator.active {
-            background-color: var(--button-brown);
-        }
-        .step-indicator.finished {
-            background-color: var(--accent-gold);
+        .links a:hover {
+            text-decoration: underline;
         }
         .error {
             color: #d32f2f;
@@ -153,7 +131,7 @@
     </style>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -169,91 +147,64 @@
         const db = getFirestore(app);
 
         window.onload = () => {
-            // Stepper logic
-            let currentStep = 0;
-            const steps = document.getElementsByClassName("form-step");
-            const prevBtn = document.getElementById("prevBtn");
-            const nextBtn = document.getElementById("nextBtn");
-            const submitBtn = document.getElementById("submitAppBtn");
-            const stepIndicatorContainer = document.getElementById("stepIndicatorContainer");
-            // Create step indicators
-            for (let i = 0; i < steps.length; i++) {
-                const indicator = document.createElement("span");
-                indicator.classList.add("step-indicator");
-                indicator.setAttribute("id", "indicator" + i);
-                stepIndicatorContainer.appendChild(indicator);
-            }
-            function updateStepIndicator(n) {
-                const indicators = document.getElementsByClassName("step-indicator");
-                Array.from(indicators).forEach((indicator, i) => {
-                    indicator.classList.remove("active", "finished");
-                    if (i < n) {
-                        indicator.classList.add("finished");
-                    } else if (i === n) {
-                        indicator.classList.add("active");
-                    }
-                });
-            }
-            function showStep(n) {
-                if (steps.length === 0) return;
-                Array.from(steps).forEach(step => {
-                    step.style.display = "none";
-                    step.classList.remove("active");
-                });
-                steps[n].style.display = "flex";
-                steps[n].classList.add("active");
-                prevBtn.disabled = (n === 0);
-                if (n === (steps.length - 1)) {
-                    nextBtn.style.display = "none";
-                    submitBtn.style.display = "inline-block";
-                } else {
-                    nextBtn.innerHTML = "Next";
-                    nextBtn.style.display = "inline-block";
-                    submitBtn.style.display = "none";
-                }
-                updateStepIndicator(n);
-            }
-            window.nextPrev = function(n) {
-                currentStep = currentStep + n;
-                if (currentStep >= steps.length) return false;
-                showStep(currentStep);
-            };
-            showStep(currentStep);
+            const form = document.getElementById('auth-form');
+            const errorDiv = document.getElementById('error-msg');
+            const toggle = document.getElementById('toggle-auth');
+            const displayNameGroup = document.getElementById('displayName-group');
+            const phoneGroup = document.getElementById('phone-group');
+            const formTitle = document.getElementById('form-title');
+            const submitBtn = document.getElementById('submit-btn');
+            let isSignUp = false;
 
-            // Registration logic
-            const form = document.getElementById('jobAppForm');
-            form.addEventListener('submit', async function(e) {
+            function setFormMode(signUp) {
+                isSignUp = signUp;
+                formTitle.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+                submitBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+                toggle.textContent = isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up";
+                displayNameGroup.style.display = isSignUp ? 'block' : 'none';
+                phoneGroup.style.display = isSignUp ? 'block' : 'none';
+                errorDiv.textContent = '';
+            }
+            setFormMode(false);
+
+            toggle.onclick = (e) => {
                 e.preventDefault();
-                const formData = new FormData(form);
-                const email = formData.get('email');
-                const password = formData.get('password');
-                const fullName = formData.get('fullName');
-                const phone = formData.get('phone');
-                // ...get other fields as needed...
+                setFormMode(!isSignUp);
+            };
 
-                try {
-                    // Create user in Firebase Auth
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    await updateProfile(userCredential.user, { displayName: fullName });
-
-                    // Optional: Save extra info to Firestore
-                    const userDocRef = doc(db, "users", userCredential.user.uid);
-                    await setDoc(userDocRef, {
-                        email: email,
-                        displayName: fullName,
-                        phone: phone,
-                        // ...add other fields as needed...
-                        createdAt: serverTimestamp(),
-                        updatedAt: serverTimestamp(),
-                        role: "agent"
-                    }, { merge: true });
-
-                    // Redirect to profile page
-                    window.location.href = "profile.html";
-                } catch (err) {
-                    alert("Account creation failed: " + err.message.replace('Firebase: ', ''));
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                errorDiv.textContent = '';
+                const email = form.email.value.trim();
+                const password = form.password.value.trim();
+                if (isSignUp) {
+                    const displayName = form.displayName.value.trim();
+                    const phone = form.phone.value.trim();
+                    try {
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        await updateProfile(userCredential.user, { displayName });
+                        const userDocRef = doc(db, "users", userCredential.user.uid);
+                        await setDoc(userDocRef, {
+                            email,
+                            displayName,
+                            phone,
+                            createdAt: serverTimestamp(),
+                            updatedAt: serverTimestamp(),
+                            role: "agent"
+                        }, { merge: true });
+                        window.location.href = "profile.html";
+                    } catch (err) {
+                        errorDiv.textContent = err.message.replace('Firebase: ', '');
+                    }
+                } else {
+                    try {
+                        await signInWithEmailAndPassword(auth, email, password);
+                        window.location.href = "profile.html";
+                    } catch (err) {
+                        errorDiv.textContent = err.message.replace('Firebase: ', '');
+                    }
                 }
-            });
+            };
         };
     </script>
 </head>
@@ -263,135 +214,35 @@
         <nav>
             <a href="index.html">Home</a>
             <a href="jobs.html">Jobs</a>
-            <a href="dashboard.html" class="active">Sign Up</a>
+            <a href="dashboard.html" class="active">Sign In</a>
             <a href="contact.html">Contact</a>
         </nav>
     </header>
     <div class="main-bg">
         <div class="container">
-            <h2>Registration Form</h2>
-            <div id="stepIndicatorContainer" class="step-indicator-container"></div>
-            <form id="jobAppForm" autocomplete="on">
-                <div class="form-step active" id="step1">
-                    <h3 style="margin-bottom:10px; color: var(--button-brown);">Step 1: Personal Information</h3>
-                    <div class="form-group">
-                        <label for="fullName">First and Last Name *</label>
-                        <input type="text" id="fullName" name="fullName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password *</label>
-                        <input type="password" id="password" name="password" required autocomplete="new-password">
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone *</label>
-                        <input type="tel" id="phone" name="phone" required>
-                    </div>
+            <h2 id="form-title">Sign In</h2>
+            <div id="error-msg" class="error"></div>
+            <form id="auth-form" autocomplete="on">
+                <div id="displayName-group" style="display:none;">
+                    <label for="displayName">Full Name</label>
+                    <input type="text" id="displayName" name="displayName" autocomplete="name">
                 </div>
-                <div class="form-step" id="step2">
-                    <h3 style="margin-bottom:10px; color: var(--button-brown);">Step 2: Address & Availability</h3>
-                    <div class="form-group">
-                        <label for="street">Street Address *</label>
-                        <input type="text" id="street" name="street" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="cityStateZip">City, State and Zip *</label>
-                        <input type="text" id="cityStateZip" name="cityStateZip" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="dob">Date of Birth *</label>
-                        <input type="date" id="dob" name="dob" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="scheduleType">Schedule Type *</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="scheduleType" value="Full Time" required> Full Time</label>
-                            <label><input type="radio" name="scheduleType" value="Part Time"> Part Time</label>
-                            <label><input type="radio" name="scheduleType" value="Seasonal"> Seasonal</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Do you have a laptop? *</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="laptop" value="Yes" required> Yes</label>
-                            <label><input type="radio" name="laptop" value="No"> No</label>
-                            <label><input type="radio" name="laptop" value="Other"> Other</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Do you have hardwired internet access? <span style="font-weight:normal;">(NO WI-FI CONNECTIONS)</span> *</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="hardwired" value="Yes" required> Yes</label>
-                            <label><input type="radio" name="hardwired" value="No"> No</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Do you have a quiet place to work? *</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="quiet" value="Yes" required> Yes</label>
-                            <label><input type="radio" name="quiet" value="No"> No</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Have you worked from home before? *</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="wfhBefore" value="Yes" required> Yes</label>
-                            <label><input type="radio" name="wfhBefore" value="No"> No</label>
-                        </div>
-                    </div>
+                <label for="email">Email address</label>
+                <input type="email" id="email" name="email" required autocomplete="email">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+                <div id="phone-group" style="display:none;">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone" autocomplete="tel">
                 </div>
-                <div class="form-step" id="step3">
-                    <h3 style="margin-bottom:10px; color: var(--button-brown);">Step 3: Work History & Legal</h3>
-                    <div class="form-group full-width">
-                        <label for="workHistory">Where have you worked in the past?</label>
-                        <input type="text" id="workHistory" name="workHistory">
-                    </div>
-                    <div class="form-group">
-                        <label>Have you ever been convicted of a crime?</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="convicted" value="No" checked> No</label>
-                            <label><input type="radio" name="convicted" value="Yes"> Yes</label>
-                        </div>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="convictionDetails">If "Yes" please elaborate</label>
-                        <input type="text" id="convictionDetails" name="convictionDetails">
-                    </div>
-                    <div class="form-group">
-                        <label>Are you currently a resident of California, Connecticut, Maryland, Massachusetts, New York, Oregon, or Wisconsin?</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="restrictedState" value="No" checked> No</label>
-                            <label><input type="radio" name="restrictedState" value="Yes"> Yes</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-step" id="step4">
-                    <h3 style="margin-bottom:10px; color: var(--button-brown);">Step 4: Additional Information & Upload</h3>
-                    <div class="form-group full-width">
-                        <label for="otherInfo">Do you have anything else we should know before your interview?</label>
-                        <textarea id="otherInfo" name="otherInfo"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="zoomDate">When are you available for a Zoom Call?</label>
-                        <input type="date" id="zoomDate" name="zoomDate">
-                    </div>
-                    <div class="form-group">
-                        <label for="resume">Upload Resume (PDF or document, max 10MB)</label>
-                        <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
-                    </div>
-                </div>
-                <div class="form-navigation">
-                    <button type="button" id="prevBtn" onclick="nextPrev(-1)" disabled>Previous</button>
-                    <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
-                </div>
-                <button type="submit" class="submit-btn" style="display:none; margin-top: 20px;" id="submitAppBtn">Create Account</button>
+                <button type="submit" id="submit-btn">Sign In</button>
             </form>
+            <div class="links">
+                <a href="#" id="toggle-auth">Don't have an account? Sign Up</a>
+            </div>
         </div>
     </div>
-    <footer style="background: var(--white); text-align: center; padding: 24px 48px; box-shadow: var(--shadow);">
+    <footer style="background: #fff; text-align: center; padding: 24px 48px; box-shadow: 0 4px 24px #0002;">
         &copy; 2024 Work from Home with Shawn
     </footer>
 </body>
