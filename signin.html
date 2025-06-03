@@ -44,7 +44,7 @@
             color: #7a684a;
             margin-bottom: 6px;
         }
-        input[type="email"], input[type="password"], input[type="text"] {
+        input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
             width: 100%;
             padding: 12px;
             margin-bottom: 18px;
@@ -135,12 +135,20 @@
                 </div>
             </div>
             <div id="displayNameField" style="display: none; flex-direction: column;">
-                <label for="displayName">Display Name</label>
+                <label for="displayName">Full Name</label>
                 <input type="text" id="displayName" name="displayName" autocomplete="name">
             </div>
             <div id="companyField" style="display: none; flex-direction: column;">
                 <label for="companyName">Company Name</label>
                 <input type="text" id="companyName" name="companyName" autocomplete="organization">
+            </div>
+            <div id="phoneField" style="display: none; flex-direction: column;">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" autocomplete="tel">
+            </div>
+            <div id="locationField" style="display: none; flex-direction: column;">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" autocomplete="address-level1">
             </div>
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required autocomplete="email">
@@ -162,6 +170,8 @@
         const displayNameField = document.getElementById('displayNameField');
         const companyField = document.getElementById('companyField');
         const accountTypeField = document.getElementById('accountTypeField');
+        const phoneField = document.getElementById('phoneField');
+        const locationField = document.getElementById('locationField');
         const formTitle = document.getElementById('form-title');
         const submitBtn = document.getElementById('submit-btn');
         const emailInput = document.getElementById('email');
@@ -175,7 +185,8 @@
             toggle.textContent = isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up";
             displayNameField.style.display = isSignUp ? 'flex' : 'none';
             accountTypeField.style.display = isSignUp ? 'flex' : 'none';
-            // Show company field only if client is selected
+            phoneField.style.display = isSignUp ? 'flex' : 'none';
+            locationField.style.display = isSignUp ? 'flex' : 'none';
             companyField.style.display = (isSignUp && getSelectedAccountType() === 'client') ? 'flex' : 'none';
             errorDiv.textContent = '';
             setTimeout(() => {
@@ -190,7 +201,6 @@
             const checked = form.querySelector('input[name="accountType"]:checked');
             return checked ? checked.value : 'agent';
         }
-        // Listen for account type change to show/hide company field
         form.addEventListener('change', function(e) {
             if (isSignUp && e.target.name === 'accountType') {
                 companyField.style.display = (getSelectedAccountType() === 'client') ? 'flex' : 'none';
@@ -212,14 +222,24 @@
             const displayName = isSignUp && form.displayName ? form.displayName.value.trim() : "";
             const accountType = isSignUp ? getSelectedAccountType() : null;
             const companyName = isSignUp && accountType === 'client' && form.companyName ? form.companyName.value.trim() : "";
+            const phone = isSignUp && form.phone ? form.phone.value.trim() : "";
+            const location = isSignUp && form.location ? form.location.value.trim() : "";
 
             if (isSignUp) {
                 if (!displayName) {
-                    errorDiv.textContent = "Please enter a display name.";
+                    errorDiv.textContent = "Please enter your full name.";
                     return;
                 }
                 if (password.length < 6) {
                     errorDiv.textContent = "Password should be at least 6 characters.";
+                    return;
+                }
+                if (!phone) {
+                    errorDiv.textContent = "Please enter your phone number.";
+                    return;
+                }
+                if (!location) {
+                    errorDiv.textContent = "Please enter your location.";
                     return;
                 }
                 if (accountType === 'client' && !companyName) {
@@ -232,7 +252,7 @@
             // Example:
             // try {
             //     if (isSignUp) {
-            //         // createUserWithEmailAndPassword, updateProfile, save accountType/companyName to Firestore
+            //         // createUserWithEmailAndPassword, updateProfile, save accountType, companyName, phone, location to Firestore
             //     } else {
             //         // signInWithEmailAndPassword
             //     }
