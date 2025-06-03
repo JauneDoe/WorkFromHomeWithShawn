@@ -225,43 +225,28 @@
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const formData = new FormData(form);
-
-                // Collect all fields from the form
-                const userData = {
-                    fullName: formData.get('fullName'),
-                    email: formData.get('email'),
-                    password: formData.get('password'),
-                    phone: formData.get('phone'),
-                    street: formData.get('street'),
-                    cityStateZip: formData.get('cityStateZip'),
-                    dob: formData.get('dob'),
-                    scheduleType: formData.get('scheduleType'),
-                    laptop: formData.get('laptop'),
-                    hardwired: formData.get('hardwired'),
-                    quiet: formData.get('quiet'),
-                    wfhBefore: formData.get('wfhBefore'),
-                    workHistory: formData.get('workHistory'),
-                    convicted: formData.get('convicted'),
-                    convictionDetails: formData.get('convictionDetails'),
-                    restrictedState: formData.get('restrictedState'),
-                    otherInfo: formData.get('otherInfo'),
-                    zoomDate: formData.get('zoomDate'),
-                    createdAt: serverTimestamp(),
-                    updatedAt: serverTimestamp(),
-                    role: "agent"
-                };
+                const email = formData.get('email');
+                const password = formData.get('password');
+                const fullName = formData.get('fullName');
+                const phone = formData.get('phone');
+                // ...get other fields as needed...
 
                 try {
                     // Create user in Firebase Auth
-                    const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
-                    await updateProfile(userCredential.user, { displayName: userData.fullName });
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await updateProfile(userCredential.user, { displayName: fullName });
 
-                    // Remove password before saving to Firestore
-                    delete userData.password;
-
-                    // Save all user info to Firestore
+                    // Optional: Save extra info to Firestore
                     const userDocRef = doc(db, "users", userCredential.user.uid);
-                    await setDoc(userDocRef, userData, { merge: true });
+                    await setDoc(userDocRef, {
+                        email: email,
+                        displayName: fullName,
+                        phone: phone,
+                        // ...add other fields as needed...
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp(),
+                        role: "agent"
+                    }, { merge: true });
 
                     // Redirect to profile page
                     window.location.href = "profile.html";
