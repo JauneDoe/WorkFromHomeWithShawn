@@ -6,19 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%); color: #222; margin: 0; }
-        header, footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 4px 24px #0002; }
+        header {
+            position: sticky; top: 0; z-index: 10;
+            display: flex; align-items: center; padding: 24px 48px;
+            background: #fff; box-shadow: 0 4px 24px #0002;
+        }
+        .logo { font-size: 2.2em; font-weight: bold; color: #7a684a; letter-spacing: 1px; }
+        nav { margin-left: 40px; }
+        nav a { margin: 0 18px; text-decoration: none; color: #222; font-weight: 500; font-size: 1.08em; transition: color 0.2s; }
+        nav a.active, nav a:hover { color: #7a684a; border-bottom: 2px solid #e6c77d; padding-bottom: 4px; }
+        .auth-links { margin-left: auto; display: flex; align-items: center; }
+        .auth-links > a { margin-left: 24px; color: #7a684a; text-decoration: none; font-weight: 500; font-size: 1.05em; }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown { position: relative; display: inline-block; margin-left: 20px; }
+        .profile-icon-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--button-brown); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: bold; cursor: pointer; border: 1px solid var(--accent-gold); }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: #fff; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 101; border-radius: 4px; margin-top: 5px; }
+        .dropdown-content a { color: #222; padding: 12px 16px; text-decoration: none; display: block; font-size: 0.95em; margin-left: 0; font-weight: normal; }
+        .dropdown-content a:hover { background-color: #eaf0fa; color: #7a684a; }
+        .profile-dropdown:hover .dropdown-content,
+        .profile-dropdown .profile-icon-avatar:focus + .dropdown-content,
+        .profile-dropdown .dropdown-content:hover { display: block; }
+        .profile-icon-avatar:focus { outline: 2px solid var(--accent-gold); }
+        
         .container { max-width: 800px; margin: 20px auto; background: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 20px; }
         h2 { color: #7a684a; margin-top: 20px; }
         p { line-height: 1.6; margin-bottom: 15px; }
-        .nav-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; }
-        .nav-links a { color: #7a684a; text-decoration: none; font-weight: bold; }
-        .nav-links a:hover { text-decoration: underline; }
-        .logo { font-size: 24px; font-weight: bold; }
-        nav { margin: 10px 0; }
-        nav a { margin: 0 15px; color: #7a684a; text-decoration: none; }
-        nav a:hover { text-decoration: underline; }
-        .auth-links a { margin: 0 10px; color: #7a684a; text-decoration: none; }
-        .auth-links a:hover { text-decoration: underline; }
+        footer { background: #fff; padding: 20px; text-align: center; box-shadow: 0 -4px 24px #0002; margin-top: 20px; }
+
     </style>
 </head>
 <body>
@@ -26,42 +41,91 @@
     <div class="logo">Work from Home with Shawn</div>
     <nav>
         <a href="index.html">Home</a>
-        <a href="jobs.html">Opportunities</a>
-        <a href="dashboard.html">Dashboard</a>
+        <a href="opportunities.html">Opportunities</a>
         <a href="blog.html">Blog</a>
         <a href="faqs.html">FAQs</a>
         <a href="contact.html">Contact</a>
+        <a href="privacy.html" class="active">Terms & Privacy</a>
     </nav>
     <div class="auth-links">
-        <a href="signin.html">Sign in</a>
-        <a href="post-job.html">Post an Opportunity</a>
+        <a href="signin.html" id="nav-signin-link">Sign in</a>
+        <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+        <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
+            <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
+            <div class="dropdown-content">
+                <a href="profile.html">Profile</a>
+                <a href="edit-profile.html">Edit Profile</a>
+                <a href="#" id="dropdown-signout-link">Sign Out</a>
+            </div>
+        </div>
     </div>
 </header>
 <div class="container">
-    <div class="nav-links">
-        <a href="#terms">Terms of Service</a>
-        <a href="#privacy">Privacy Policy</a>
-    </div>
-
-    <section id="terms">
-        <h2>Terms of Service</h2>
-        <p>Welcome to Work from Home with Shawn. By accessing or using our website, you agree to be bound by these Terms of Service. If you do not agree to all the terms, do not use the site.</p>
-        <p><strong>User Accounts:</strong> You are responsible for maintaining the confidentiality of your account information and for all activities under your account.</p>
-        <p><strong>Job Postings:</strong> Clients must ensure that all job information is accurate and lawful. We are not responsible for any discrepancies or disputes.</p>
-        <p><strong>Service Eligibility:</strong> Users must be at least 18 years old or have parental consent to use our services.</p>
-        <p>... (additional terms here) ...</p>
-    </section>
-
-    <section id="privacy">
-        <h2>Privacy Policy</h2>
-        <p>We value your privacy. This Privacy Policy explains how we collect, use, and protect your personal information.</p>
-        <p><strong>Data Collection:</strong> We collect information you provide directly, such as your name, email address, and profile details.</p>
-        <p><strong>Use of Data:</strong> We use your data to personalize your experience, provide support, and communicate updates.</p>
-        <p><strong>Data Protection:</strong> Your data is stored securely using industry-standard encryption and access controls.</p>
-        <p><strong>Cookies:</strong> We use cookies to enhance site functionality. You can control cookies via your browser settings.</p>
-        <p>... (additional privacy details here) ...</p>
-    </section>
+    <h2>Terms of Service</h2>
+    <p>Welcome to Work from Home with Shawn. By accessing or using our website, you agree to be bound by these Terms of Service. If you do not agree to all the terms, do not use the site.</p>
+    <p><strong>User Accounts:</strong> You are responsible for maintaining the confidentiality of your account information and for all activities under your account.</p>
+    <p><strong>Job Postings:</strong> Clients must ensure that all job information is accurate and lawful. We are not responsible for any discrepancies or disputes.</p>
+    <p><strong>Service Eligibility:</strong> Users must be at least 18 years old or have parental consent to use our services.</p>
+    <p><em>(Content for Terms of Service...)</em></p>
+    
+    <h2>Privacy Policy</h2>
+    <p><em>(Content for Privacy Policy...)</em></p>
 </div>
 <footer>&copy; 2024 Work from Home with Shawn</footer>
+<script>
+// Standard auth display script (similar to index.html's second script block)
+document.addEventListener('DOMContentLoaded', function() {
+    function updateAuthDisplay(user, userData = {}) {
+        const signInLink = document.getElementById('nav-signin-link');
+        const postJobLink = document.getElementById('nav-post-job-link');
+        const profileDropdownContainer = document.getElementById('profile-dropdown-container');
+        const headerProfileAvatar = document.getElementById('header-profile-avatar');
+
+        if (user) {
+            if (signInLink) signInLink.style.display = 'none';
+            if (postJobLink) {
+                postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
+            }
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+            if (headerProfileAvatar) {
+                const displayName = userData.displayName || (user && user.displayName) || "U";
+                headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+            }
+        } else {
+            if (signInLink) signInLink.style.display = 'inline-block';
+            if (postJobLink) postJobLink.style.display = 'none';
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
+        }
+    }
+
+    if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
+        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
+            if (user) {
+                const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
+                const userDoc = await window.firebaseFirestoreFunctions.getDoc(userDocRef);
+                const userData = userDoc.exists() ? userDoc.data() : {};
+                updateAuthDisplay(user, userData);
+            } else {
+                updateAuthDisplay(null);
+            }
+        });
+
+        const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
+        if (dropdownSignOutLink) {
+            dropdownSignOutLink.onclick = function(e) {
+                e.preventDefault();
+                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
+                    window.location.href = "index.html";
+                });
+            };
+        }
+    } else { 
+        console.warn("Firebase auth object not found on window. Auth links might not update dynamically.");
+        const localUser = localStorage.getItem('signedIn') === 'true' ? { displayName: 'User' } : null;
+        const localUserData = localUser ? JSON.parse(localStorage.getItem('userData') || '{}') : {};
+        updateAuthDisplay(localUser, localUserData);
+    }
+});
+</script>
 </body>
 </html>

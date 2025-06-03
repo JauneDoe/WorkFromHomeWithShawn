@@ -120,14 +120,21 @@
     <nav>
         <a href="index.html">Home</a>
         <a href="jobs.html" class="active">Opportunities</a>
-        <a href="dashboard.html">Dashboard</a>
         <a href="blog.html">Blog</a>
         <a href="faqs.html">FAQs</a>
         <a href="contact.html">Contact</a>
     </nav>
     <div class="auth-links">
-        <a href="signin.html">Sign in</a>
-        <a href="post-job.html">Post an Opportunity</a>
+        <a href="signin.html" id="nav-signin-link">Sign in</a>
+        <a href="post-job.html" id="nav-post-job-link" style="display:none;">Post an Opportunity</a>
+        <div class="profile-dropdown" id="profile-dropdown-container" style="display:none;">
+            <div class="profile-icon-avatar" id="header-profile-avatar" tabindex="0">U</div>
+            <div class="dropdown-content">
+                <a href="profile.html">Profile</a>
+                <a href="edit-profile.html">Edit Profile</a>
+                <a href="#" id="dropdown-signout-link">Sign Out</a>
+            </div>
+        </div>
     </div>
 </header>
 <div class="container">
@@ -189,6 +196,60 @@ function copyJobLink() {
         console.error('Failed to copy: ', err);
     });
 }
+
+// Standard auth display script
+document.addEventListener('DOMContentLoaded', function() {
+    function updateAuthDisplay(user, userData = {}) {
+        const signInLink = document.getElementById('nav-signin-link');
+        const postJobLink = document.getElementById('nav-post-job-link');
+        const profileDropdownContainer = document.getElementById('profile-dropdown-container');
+        const headerProfileAvatar = document.getElementById('header-profile-avatar');
+
+        if (user) {
+            if (signInLink) signInLink.style.display = 'none';
+            if (postJobLink) {
+                postJobLink.style.display = (userData.accountType === 'client') ? 'inline-block' : 'none';
+            }
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'inline-block';
+            if (headerProfileAvatar) {
+                const displayName = userData.displayName || (user && user.displayName) || "U";
+                headerProfileAvatar.textContent = displayName[0] ? displayName[0].toUpperCase() : "U";
+            }
+        } else {
+            if (signInLink) signInLink.style.display = 'inline-block';
+            if (postJobLink) postJobLink.style.display = 'none';
+            if (profileDropdownContainer) profileDropdownContainer.style.display = 'none';
+        }
+    }
+
+    if (window.firebaseAuth && window.firebaseAuthFunctions && window.firebaseFirestoreFunctions) {
+        window.firebaseAuthFunctions.onAuthStateChanged(window.firebaseAuth, async (user) => {
+            if (user) {
+                const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
+                const userDoc = await window.firebaseFirestoreFunctions.getDoc(userDocRef);
+                const userData = userDoc.exists() ? userDoc.data() : {};
+                updateAuthDisplay(user, userData);
+            } else {
+                updateAuthDisplay(null);
+            }
+        });
+
+        const dropdownSignOutLink = document.getElementById('dropdown-signout-link');
+        if (dropdownSignOutLink) {
+            dropdownSignOutLink.onclick = function(e) {
+                e.preventDefault();
+                window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
+                    window.location.href = "index.html";
+                });
+            };
+        }
+    } else { 
+        console.warn("Firebase auth object not found on window. Auth links might not update dynamically.");
+        const localUser = localStorage.getItem('signedIn') === 'true' ? { displayName: 'User' } : null;
+        const localUserData = localUser ? JSON.parse(localStorage.getItem('userData') || '{}') : {};
+        updateAuthDisplay(localUser, localUserData);
+    }
+});
 </script>
 </body>
 </html>
