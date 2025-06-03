@@ -127,9 +127,20 @@
         <h2 id="form-title">Sign In</h2>
         <div id="error-msg" class="error"></div>
         <form id="auth-form">
+            <div id="accountTypeField" style="display: none; flex-direction: column; margin-bottom: 18px;">
+                <label>Account Type</label>
+                <div style="display: flex; gap: 16px;">
+                    <label><input type="radio" name="accountType" value="agent" checked> Agent</label>
+                    <label><input type="radio" name="accountType" value="client"> Client</label>
+                </div>
+            </div>
             <div id="displayNameField" style="display: none; flex-direction: column;">
                 <label for="displayName">Display Name</label>
                 <input type="text" id="displayName" name="displayName" autocomplete="name">
+            </div>
+            <div id="companyField" style="display: none; flex-direction: column;">
+                <label for="companyName">Company Name</label>
+                <input type="text" id="companyName" name="companyName" autocomplete="organization">
             </div>
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required autocomplete="email">
@@ -149,6 +160,8 @@
         const toggle = document.getElementById('toggle-auth');
         const errorDiv = document.getElementById('error-msg');
         const displayNameField = document.getElementById('displayNameField');
+        const companyField = document.getElementById('companyField');
+        const accountTypeField = document.getElementById('accountTypeField');
         const formTitle = document.getElementById('form-title');
         const submitBtn = document.getElementById('submit-btn');
         const emailInput = document.getElementById('email');
@@ -161,6 +174,9 @@
             submitBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
             toggle.textContent = isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up";
             displayNameField.style.display = isSignUp ? 'flex' : 'none';
+            accountTypeField.style.display = isSignUp ? 'flex' : 'none';
+            // Show company field only if client is selected
+            companyField.style.display = (isSignUp && getSelectedAccountType() === 'client') ? 'flex' : 'none';
             errorDiv.textContent = '';
             setTimeout(() => {
                 if (isSignUp && displayNameField.querySelector('input')) {
@@ -170,6 +186,17 @@
                 }
             }, 0);
         }
+        function getSelectedAccountType() {
+            const checked = form.querySelector('input[name="accountType"]:checked');
+            return checked ? checked.value : 'agent';
+        }
+        // Listen for account type change to show/hide company field
+        form.addEventListener('change', function(e) {
+            if (isSignUp && e.target.name === 'accountType') {
+                companyField.style.display = (getSelectedAccountType() === 'client') ? 'flex' : 'none';
+            }
+        });
+
         setAuthState(false);
 
         toggle.onclick = function(e) {
@@ -183,6 +210,8 @@
             const email = emailInput.value.trim();
             const password = passwordInput.value;
             const displayName = isSignUp && form.displayName ? form.displayName.value.trim() : "";
+            const accountType = isSignUp ? getSelectedAccountType() : null;
+            const companyName = isSignUp && accountType === 'client' && form.companyName ? form.companyName.value.trim() : "";
 
             if (isSignUp) {
                 if (!displayName) {
@@ -193,15 +222,19 @@
                     errorDiv.textContent = "Password should be at least 6 characters.";
                     return;
                 }
+                if (accountType === 'client' && !companyName) {
+                    errorDiv.textContent = "Please enter your company name.";
+                    return;
+                }
             }
 
             // Use your Firebase auth logic here, as in !DOCTYPE html.txt
             // Example:
             // try {
             //     if (isSignUp) {
-            //         // sign up logic
+            //         // createUserWithEmailAndPassword, updateProfile, save accountType/companyName to Firestore
             //     } else {
-            //         // sign in logic
+            //         // signInWithEmailAndPassword
             //     }
             // } catch (err) {
             //     errorDiv.textContent = err.message.replace('Firebase: ', '');
