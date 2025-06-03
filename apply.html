@@ -359,7 +359,7 @@
         if (currentStep >= steps.length) { return false; }
         showStep(currentStep);
     }
-    document.getElementById('jobAppForm').addEventListener('submit', function(e) {
+    document.getElementById('jobAppForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         var form = e.target;
         var formData = new FormData(form);
@@ -369,7 +369,7 @@
             return;
         }
         var reader = new FileReader();
-        reader.onload = function(evt) {
+        reader.onload = async function(evt) {
             var base64Resume = evt.target.result.split(',')[1];
             var params = {};
             formData.forEach((value, key) => {
@@ -378,6 +378,63 @@
             params['resume'] = base64Resume;
             params['resumeName'] = resumeFile.name;
             params['resumeType'] = resumeFile.type;
+
+            // --- Update user profile in Firebase if signed in ---
+            if (window.firebaseAuth && window.firebaseAuth.currentUser && window.firebaseFirestoreFunctions && window.firebaseDB) {
+                try {
+                    const user = window.firebaseAuth.currentUser;
+                    const userDocRef = window.firebaseFirestoreFunctions.doc(window.firebaseDB, "users", user.uid);
+                    // Only update fields that are present in the form
+                    const userUpdate = {
+                        displayName: params.fullName || user.displayName || "",
+                        email: params.email || user.email || "",
+                        phone: params.phone || "",
+                        street: params.street || "",
+                        cityStateZip: params.cityStateZip || "",
+                        dob: params.dob || "",
+                        scheduleType: params.scheduleType || "",
+                        laptop: params.laptop || "",
+                        hardwired: params.hardwired || "",
+                        quiet: params.quiet || "",
+                        wfhBefore: params.wfhBefore || "",
+                        workHistory: params.workHistory || "",
+                        convicted: params.convicted || "",
+                        convictionDetails: params.convictionDetails || "",
+                        restrictedState: params.restrictedState || "",
+                        otherInfo: params.otherInfo || "",
+                        zoomDate: params.zoomDate || "",
+                        // You may want to store resume meta, but not the file itself in user profile
+                    };
+                    await window.firebaseFirestoreFunctions.setDoc(userDocRef, userUpdate, { merge: true });
+                } catch (err) {
+                    alert("Could not update your account profile: " + err.message);
+                }
+            } else {
+                // Optionally, store in localStorage for demo/non-auth users
+                if (localStorage.getItem('signedIn') === 'true') {
+                    localStorage.setItem('userData', JSON.stringify({
+                        displayName: params.fullName,
+                        email: params.email,
+                        phone: params.phone,
+                        street: params.street,
+                        cityStateZip: params.cityStateZip,
+                        dob: params.dob,
+                        scheduleType: params.scheduleType,
+                        laptop: params.laptop,
+                        hardwired: params.hardwired,
+                        quiet: params.quiet,
+                        wfhBefore: params.wfhBefore,
+                        workHistory: params.workHistory,
+                        convicted: params.convicted,
+                        convictionDetails: params.convictionDetails,
+                        restrictedState: params.restrictedState,
+                        otherInfo: params.otherInfo,
+                        zoomDate: params.zoomDate
+                    }));
+                }
+            }
+
+            // ...existing code for submitting the application...
             var query = new URLSearchParams(params).toString();
             fetch(form.action, {
                 method: 'POST',
