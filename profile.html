@@ -494,5 +494,38 @@
         document.getElementById('client-dashboard').style.display = (accountType === 'client') ? '' : 'none';
     })();
     </script>
+    <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko",
+    authDomain: "workwithshawnauth.firebaseapp.com",
+    projectId: "workwithshawnauth",
+    storageBucket: "workwithshawnauth.firebasestorage.app",
+    messagingSenderId: "38163174001",
+    appId: "1:38163174001:web:45a352c8da0112bcfe41d0"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        // Fetch user profile from Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById('profile-name').textContent = data.fullName || user.displayName || 'User Name';
+            document.getElementById('profile-email').textContent = data.email || user.email || '';
+            document.getElementById('profile-phone').textContent = data.phone || '';
+            document.getElementById('profile-location').textContent = data.cityStateZip || '';
+            // Optionally update onboarding progress, assignments, etc. here
+        }
+    }
+});
+</script>
 </body>
 </html>
