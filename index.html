@@ -1,11 +1,519 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- ...copy everything from the <head> of !DOCTYPE html.txt... -->
-    <!-- ...existing code from !DOCTYPE html.txt... -->
+    <meta charset="UTF-8">
+    <title>Working from Home with Shawn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --primary-bg: #f7f5f0;
+            --accent-gold: #e6c77d;
+            --button-brown: #7a684a;
+            --text-black: #222222;
+            --white: #ffffff;
+            --soft-blue: #eaf0fa;
+            --shadow: 0 4px 24px #0002;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--primary-bg); color: var(--text-black); }
+        header {
+            position: sticky; top: 0; z-index: 10;
+            display: flex; align-items: center; padding: 24px 48px;
+            background: var(--white); box-shadow: var(--shadow);
+        }
+        .logo { font-size: 2.2em; font-weight: bold; color: var(--button-brown); letter-spacing: 1px; }
+        nav { margin-left: 40px; }
+        nav a { margin: 0 18px; text-decoration: none; color: var(--text-black); font-weight: 500; font-size: 1.08em; transition: color 0.2s; }
+        nav a.active, nav a:hover { color: var(--button-brown); border-bottom: 2px solid var(--accent-gold); padding-bottom: 4px; }
+        .auth-links { margin-left: auto; }
+        .auth-links a { margin-left: 24px; color: var(--button-brown); text-decoration: none; font-weight: 500; font-size: 1.05em; }
+
+        .hero {
+            display: flex; flex-direction: row; align-items: center; justify-content: center;
+            background: linear-gradient(90deg, var(--accent-gold) 0%, var(--soft-blue) 100%);
+            padding: 60px 0 40px 0; gap: 60px;
+        }
+        .hero-content { max-width: 480px; }
+        .hero-title { font-size: 2.6em; font-weight: bold; color: var(--button-brown); margin-bottom: 16px; }
+        .hero-desc { font-size: 1.25em; margin-bottom: 32px; color: var(--text-black);}
+        .cta-btn { background: var(--button-brown); color: var(--white); border: none; border-radius: 6px; padding: 16px 40px; font-size: 1.15em; cursor: pointer; font-weight: 600; box-shadow: 0 2px 8px #0001; transition: background 0.2s;}
+        .cta-btn:hover { background: #5e513a; }
+        .hero-illustration {
+            width: 340px; height: 220px; background: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
+            border-radius: 24px; box-shadow: var(--shadow);
+        }
+
+        .search-section { display: flex; justify-content: center; margin: -40px 0 32px 0; }
+        .search-bar { background: var(--white); box-shadow: var(--shadow); border-radius: 10px; display: flex; padding: 14px; width: 600px; }
+        .search-bar input { border: none; outline: none; padding: 12px; font-size: 1.1em; flex: 1; background: var(--white); color: var(--text-black);}
+        .search-bar input.location { max-width: 180px; margin-left: 10px; }
+        .search-bar button { background: var(--button-brown); color: var(--white); border: none; border-radius: 5px; padding: 0 28px; font-size: 1.1em; margin-left: 10px; cursor: pointer; }
+
+        main { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        section { margin-bottom: 48px; }
+        h2 { font-size: 2em; color: var(--button-brown); margin-bottom: 20px; }
+        ul, ol { font-size: 1.08em; }
+        .featured-jobs {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px;
+        }
+        .job-card {
+            background: var(--white); border-radius: 10px; box-shadow: var(--shadow); padding: 24px;
+            display: flex; flex-direction: column; gap: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added for hover effect */
+        }
+        .job-card:hover { /* Added hover effect */
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px #0003;
+        }
+        .job-title { font-weight: bold; font-size: 1.15em; color: var(--button-brown);}
+        .job-company { color: #6d5c3d; font-size: 1em;}
+        .job-location { color: #888; font-size: 0.98em;}
+        .job-apply { margin-top: 10px; align-self: flex-start; background: var(--accent-gold); color: var(--text-black); border: none; border-radius: 4px; padding: 8px 18px; font-weight: 500; cursor: pointer;}
+        .job-apply:hover { background: #d4b05c; }
+
+        .how-it-works {
+            display: flex; flex-wrap: wrap; gap: 32px;
+        }
+        .step {
+            flex: 1 1 220px; background: var(--white); border-radius: 10px; box-shadow: var(--shadow); padding: 24px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Added for hover effect */
+        }
+        .step:hover { /* Added hover effect */
+            transform: scale(1.03);
+        }
+        .step-icon { /* Added for How it Works icons */
+            font-size: 2.5em; 
+            color: var(--button-brown);
+            margin-bottom: 10px;
+        }
+        .step-number { font-size: 2em; color: var(--accent-gold); font-weight: bold; }
+        .step-title { font-size: 1.15em; font-weight: 600; margin: 10px 0 6px 0; color: var(--button-brown);}
+        .step-desc { font-size: 1em; color: #444; }
+
+        .testimonial-section { background: var(--soft-blue); border-radius: 12px; padding: 36px 24px; margin-bottom: 48px;}
+        .testimonials { display: flex; gap: 32px; flex-wrap: wrap; }
+        .testimonial {
+            background: var(--white); border-radius: 10px; box-shadow: var(--shadow); padding: 20px 18px; flex: 1 1 220px;
+            font-size: 1.05em; color: #444;
+        }
+        .testimonial-author { margin-top: 10px; font-weight: bold; color: var(--button-brown);}
+        blockquote { border-left: 4px solid var(--accent-gold); margin: 1em 0; padding-left: 1em; color: var(--button-brown); background: #f9f6f1; }
+
+        .about-section { display: flex; gap: 32px; align-items: flex-start; }
+        .about-photo {
+            width: 120px; height: 120px; border-radius: 50%; background: url('https://randomuser.me/api/portraits/men/32.jpg') center/cover no-repeat;
+            box-shadow: var(--shadow);
+        }
+        .about-content { flex: 1; }
+
+        .newsletter { background: var(--white); border-radius: 10px; box-shadow: var(--shadow); padding: 24px; margin: 0 auto 36px auto; max-width: 500px; text-align: center;}
+        .newsletter input[type="email"] { padding: 10px; border-radius: 4px; border: 1px solid #ccc; width: 60%; margin-right: 10px;}
+        .newsletter button { background: var(--button-brown); color: var(--white); border: none; border-radius: 4px; padding: 10px 22px; font-size: 1em; cursor: pointer;}
+        .newsletter button:hover { background: #5e513a; }
+
+        footer { background: var(--white); border-top: 1px solid var(--accent-gold); padding: 36px 0 16px 0; text-align: center; font-size: 1em; color: var(--text-black);}
+        .footer-links { margin-bottom: 12px; }
+        .footer-links a { margin: 0 12px; color: var(--button-brown); text-decoration: none; }
+        .footer-social { margin: 18px 0; }
+        .footer-social a { margin: 0 8px; color: var(--button-brown); font-size: 1.3em; text-decoration: none; }
+
+        /* AI Assistant Chat Widget Styles */
+        .ai-chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .ai-chat-toggle {
+            background-color: var(--button-brown);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+        .ai-chat-toggle:hover {
+            background-color: #5e513a; /* Darker brown */
+        }
+        .ai-chat-window {
+            display: none; /* Hidden by default */
+            position: absolute;
+            bottom: 80px; /* Above the toggle button */
+            right: 0;
+            width: 320px;
+            height: 450px;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .ai-chat-window.open {
+            display: flex;
+        }
+        .ai-chat-header {
+            background-color: var(--button-brown);
+            color: var(--white);
+            padding: 12px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ai-chat-header .close-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .ai-chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: var(--primary-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .ai-chat-messages .message {
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            font-size: 0.95em;
+        }
+        .ai-chat-messages .message.user {
+            background-color: var(--accent-gold);
+            color: var(--text-black);
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        .ai-chat-messages .message.assistant {
+            background-color: var(--soft-blue);
+            color: var(--text-black);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+        .ai-chat-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+        .ai-chat-input-area input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            margin-right: 8px;
+            outline: none;
+        }
+        .ai-chat-input-area button {
+            background-color: var(--button-brown);
+            color: var(--white);
+            border: none;
+            border-radius: 20px;
+            padding: 0 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .ai-chat-input-area button:hover {
+            background-color: #5e513a;
+        }
+    </style>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAFuKbh5b-hgQ_9MucLa3hAgQ0QD8XITko",
+          authDomain: "workwithshawnauth.firebaseapp.com",
+          projectId: "workwithshawnauth",
+          storageBucket: "workwithshawnauth.firebasestorage.app",
+          messagingSenderId: "38163174001",
+          appId: "1:38163174001:web:45a352c8da0112bcfe41d0"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+    </script>
 </head>
 <body>
-    <!-- ...copy everything from the <body> of !DOCTYPE html.txt... -->
-    <!-- ...existing code from !DOCTYPE html.txt... -->
+    <header>
+        <div class="logo">Work from Home with Shawn</div>
+        <nav>
+            <a href="index.html" class="active">Home</a>
+            <a href="jobs.html">Jobs</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="blog.html">Blog</a>
+            <a href="faqs.html">FAQs</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="auth-links">
+            <a href="dashboard.html">Sign in</a>
+            <a href="post-job.html">Post a Job</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-title">Find Your Next Remote Job</div>
+            <div class="hero-desc">
+                Discover flexible, real work-from-home opportunities. Join Shawn’s community and start your remote career today!
+            </div>
+            <button class="cta-btn" onclick="window.location.href='https://sites.google.com/view/workfromhomewithshawn/jobs-listing-page'">Browse Jobs</button>
+        </div>
+        <div class="hero-illustration"></div>
+    </section>
+
+    <div class="search-section">
+        <form class="search-bar" action="https://sites.google.com/view/workfromhomewithshawn/jobs-listing-page" method="get">
+            <input type="text" placeholder="Job title, keywords, or company" name="q">
+            <input type="text" class="location" placeholder="Location" name="location">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <main>
+        <section>
+            <h2>Featured Remote Jobs</h2>
+            <div class="featured-jobs">
+                <div class="job-card">
+                    <div class="job-title">Customer Support Specialist</div>
+                    <div class="job-company">Acme Corp</div>
+                    <div class="job-location">Remote (US)</div>
+                    <button class="job-apply" onclick="window.location.href='https://sites.google.com/view/workfromhomewithshawn/application-submission-page'">Apply Now</button>
+                </div>
+                <div class="job-card">
+                    <div class="job-title">Virtual Assistant</div>
+                    <div class="job-company">Bright Solutions</div>
+                    <div class="job-location">Remote (Canada)</div>
+                    <button class="job-apply" onclick="window.location.href='https://sites.google.com/view/workfromhomewithshawn/application-submission-page'">Apply Now</button>
+                </div>
+                <div class="job-card">
+                    <div class="job-title">Online Chat Agent</div>
+                    <div class="job-company">HomeConnect</div>
+                    <div class="job-location">Remote (US/CA)</div>
+                    <button class="job-apply" onclick="window.location.href='https://sites.google.com/view/workfromhomewithshawn/application-submission-page'">Apply Now</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Breaking News / Announcements Panel -->
+        <section style="margin-bottom:32px;">
+            <div style="background:var(--accent-gold);color:var(--text-black);padding:18px 24px;border-radius:10px;box-shadow:var(--shadow);font-weight:bold;">
+                <span style="font-size:1.1em;">🚨 Breaking News:</span> New onboarding requirements for agents starting July 2024. <a href="#documents" style="color:var(--button-brown);text-decoration:underline;">See details</a>
+            </div>
+        </section>
+
+        <!-- Agent Dashboard Preview Section -->
+        <section>
+            <h2>Your Agent Dashboard</h2>
+            <div style="display:flex;gap:32px;flex-wrap:wrap;">
+                <div class="dashboard-preview-card"> {/* Updated class */}
+                    <div class="card-title">Onboarding Progress</div>
+                    <div style="margin-bottom:8px;">Step 2 of 4 completed</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar" style="width:50%;"></div> {/* Example progress */}
+                    </div>
+                </div>
+                <div class="dashboard-preview-card"> {/* Updated class */}
+                    <div class="card-title">My Metrics</div>
+                    <div>Attendance: <b>98%</b></div>
+                    <div>Client Rating: <b>4.8/5</b></div>
+                </div>
+                <div class="dashboard-preview-card"> {/* Updated class */}
+                    <div class="card-title">Support</div>
+                    <div>Need help? <a href="https://sites.google.com/view/workfromhomewithshawn/contact-support-page" style="color:var(--button-brown);text-decoration:underline;">Contact Support</a></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Documents & Resources Section -->
+        <section id="documents">
+            <h2>Documents & Resources</h2>
+            <ul>
+                <li><a href="https://sites.google.com/view/workfromhomewithshawn/agent-agreement" style="color:var(--button-brown);">Download Agent Agreement</a></li>
+                <li><a href="https://sites.google.com/view/workfromhomewithshawn/tax-form" style="color:var(--button-brown);">Download Tax Form (W-9)</a></li>
+                <li><a href="https://sites.google.com/view/workfromhomewithshawn/certification-guide" style="color:var(--button-brown);">Certification Guide</a></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>How It Works</h2>
+            <div class="how-it-works">
+                <div class="step">
+                    <div class="step-icon">📝</div> {/* Example Icon - consider using SVG or font icons */}
+                    <div class="step-number">1</div>
+                    <div class="step-title">Sign Up</div>
+                    <div class="step-desc">Create your free account and complete your profile.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🔍</div> {/* Example Icon */}
+                    <div class="step-number">2</div>
+                    <div class="step-title">Browse Jobs</div>
+                    <div class="step-desc">Explore curated remote jobs that fit your skills and schedule.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🤝</div> {/* Example Icon */}
+                    <div class="step-number">3</div>
+                    <div class="step-title">Apply & Connect</div>
+                    <div class="step-desc">Apply directly and connect with top employers looking for remote talent.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🚀</div> {/* Example Icon */}
+                    <div class="step-number">4</div>
+                    <div class="step-title">Start Working</div>
+                    <div class="step-desc">Begin your remote journey with full support from Shawn and the community.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonial-section">
+            <h2>What Our Members Say</h2>
+            <div class="testimonials">
+                <div class="testimonial">
+                    “I landed my first remote job in just two weeks! Shawn’s support made all the difference.”
+                    <div class="testimonial-author">— Jamie R.</div>
+                </div>
+                <div class="testimonial">
+                    “The job listings are legit and the process is simple. Highly recommend for anyone wanting to work from home.”
+                    <div class="testimonial-author">— Priya S.</div>
+                </div>
+                <div class="testimonial">
+                    “I love the flexibility and the community. I finally have work-life balance!”
+                    <div class="testimonial-author">— Alex M.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section" id="about">
+            <div class="about-photo"></div>
+            <div class="about-content">
+                <h2>Meet Shawn</h2>
+                <p>Hi, I'm Shawn — your dedicated onboarding partner. I know what it’s like to search for meaningful work that fits your life, not the other way around. I began as a phone agent and became a Facilitator through commitment and growth.</p>
+                <p>Today, my mission is to guide and support others toward rewarding careers while maintaining work-life balance.</p>
+                <blockquote>
+                    "My mission is to inspire and empower individuals to take control of their future by earning a meaningful income from the comfort of home through straightforward customer service work. What sets me apart is my unwavering commitment to honesty, support, and making real opportunities accessible to anyone ready to succeed."
+                </blockquote>
+            </div>
+        </section>
+
+        <section class="newsletter">
+            <h2>Stay Updated</h2>
+            <p>Get the latest remote jobs and tips delivered to your inbox.</p>
+            <form action="#" onsubmit="window.location.href='https://sites.google.com/view/workfromhomewithshawn/blogresource-page'; return false;">
+                <input type="email" placeholder="Your email address" required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </section>
+
+        <section id="faqs">
+            <h2>FAQs</h2>
+            <p><a href="https://sites.google.com/view/workfromhomewithshawn/help-centerfaqs-page">Read Frequently Asked Questions</a></p>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Shawn</h2>
+            <p><a href="https://sites.google.com/view/workfromhomewithshawn/contact-support-page">Reach Out to Me Here</a></p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="jobs.html">Jobs</a>
+            <a href="faqs.html">FAQs</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div>
+            &copy; 2024 Work from Home with Shawn. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- AI Assistant Chat Widget HTML -->
+    <div class="ai-chat-widget">
+        <div class="ai-chat-window" id="aiChatWindow">
+            <div class="ai-chat-header">
+                <span>AI Assistant</span>
+                <button class="close-btn" id="closeAiChatBtn">&times;</button>
+            </div>
+            <div class="ai-chat-messages" id="aiChatMessages">
+                <div class="message assistant">Hello! How can I help you today?</div>
+                {/* Messages will be added here by JavaScript */}
+            </div>
+            <div class="ai-chat-input-area">
+                <input type="text" id="aiChatMessageInput" placeholder="Ask something...">
+                <button id="sendAiChatMessageBtn">Send</button>
+            </div>
+        </div>
+        <button class="ai-chat-toggle" id="aiChatToggleBtn">
+            <span>🤖</span> {/* Or use an SVG icon */}
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const aiChatToggleBtn = document.getElementById('aiChatToggleBtn');
+            const aiChatWindow = document.getElementById('aiChatWindow');
+            const closeAiChatBtn = document.getElementById('closeAiChatBtn');
+            const aiChatMessageInput = document.getElementById('aiChatMessageInput');
+            const sendAiChatMessageBtn = document.getElementById('sendAiChatMessageBtn');
+            const aiChatMessagesContainer = document.getElementById('aiChatMessages');
+
+            aiChatToggleBtn.addEventListener('click', () => {
+                aiChatWindow.classList.toggle('open');
+                // Toggle button icon (optional)
+                if (aiChatWindow.classList.contains('open')) {
+                    aiChatToggleBtn.innerHTML = '<span>&times;</span>'; // Change to close icon
+                } else {
+                    aiChatToggleBtn.innerHTML = '<span>🤖</span>'; // Change back to bot icon
+                }
+            });
+
+            closeAiChatBtn.addEventListener('click', () => {
+                aiChatWindow.classList.remove('open');
+                aiChatToggleBtn.innerHTML = '<span>🤖</span>'; // Reset toggle button icon
+            });
+
+            function addMessageToChat(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', sender); // sender can be 'user' or 'assistant'
+                messageDiv.textContent = text;
+                aiChatMessagesContainer.appendChild(messageDiv);
+                aiChatMessagesContainer.scrollTop = aiChatMessagesContainer.scrollHeight; // Scroll to bottom
+            }
+
+            sendAiChatMessageBtn.addEventListener('click', () => {
+                const messageText = aiChatMessageInput.value.trim();
+                if (messageText) {
+                    addMessageToChat(messageText, 'user');
+                    aiChatMessageInput.value = '';
+
+                    // Placeholder for AI response
+                    setTimeout(() => {
+                        addMessageToChat("I'm a demo AI. I received: " + messageText, 'assistant');
+                    }, 1000);
+                }
+            });
+
+            aiChatMessageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendAiChatMessageBtn.click();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
