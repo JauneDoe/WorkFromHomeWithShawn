@@ -2,45 +2,424 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Apply | Work from Home with Shawn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work from Home with Shawn - Apply</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(90deg, #e6c77d 0%, #eaf0fa 100%);
+            color: #222;
+            min-height: 100vh;
+            margin: 0;
+        }
+        header, footer {
+            background: #fff;
+            padding: 24px 48px;
+            text-align: center;
+            box-shadow: 0 4px 24px #0002;
+        }
+        h1 {
+            color: #7a684a;
+            margin-bottom: 20px;
+        }
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 0 24px;
+        }
+        .apply-section-title {
+            font-size: 2em;
+            color: #7a684a;
+            margin-bottom: 24px;
+            font-weight: bold;
+        }
+        form {
+            /* display: flex; flex-wrap: wrap; gap: 32px 24px; */ /* Form itself is no longer the direct flex container for groups */
+            background: none;
+            box-shadow: none;
+            padding: 0;
+            width: 100%; /* Ensure form takes up space for its children */
+        }
+        .form-group {
+            flex: 1 1 320px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0;
+        }
+        .form-group.full-width {
+            flex-basis: 100%;
+        }
+        label {
+            font-weight: bold;
+            color: #7a684a;
+            margin-bottom: 6px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea, input[type="file"] {
+            padding: 12px;
+            border: 1px solid #e6c77d;
+            border-radius: 6px;
+            font-size: 1em;
+            background: #fff;
+            margin-bottom: 0;
+            transition: box-shadow 0.2s ease; /* Added for focus */
+        }
+        input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="date"]:focus, textarea:focus, input[type="file"]:focus { /* Added focus style */
+            outline: none;
+            border-color: #7a684a; /* Darker gold or brown */
+            box-shadow: 0 0 0 2px rgba(230, 199, 125, 0.5); 
+        }
+        .radio-group, .checkbox-group {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 0;
+            align-items: center;
+        }
+        .radio-group label, .checkbox-group label {
+            font-weight: normal;
+            margin-bottom: 0;
+        }
+        .submit-btn {
+            background: #e6c77d;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #222;
+            margin-top: 24px;
+            box-shadow: 0 2px 8px #0001;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover { background: #d4b05c; }
+
+        /* Step Indicator Styles */
+        .step-indicator-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .step-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin: 0 5px;
+            transition: background-color 0.3s ease;
+        }
+        .step-indicator.active {
+            background-color: var(--button-brown); /* Use a theme color */
+        }
+        .step-indicator.finished {
+            background-color: var(--accent-gold); /* Use a theme color for completed steps */
+        }
+
+        .form-step { 
+            display: none; 
+        }
+        .form-step.active {
+            display: flex; /* Make active step a flex container for its form-groups */
+            flex-wrap: wrap;
+            gap: 20px 24px; /* Adjust gap as needed for groups within a step */
+        }
+        .form-navigation { /* For multi-step form navigation */
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .form-navigation button {
+            background: #7a684a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-navigation button:disabled {
+            background: #ccc;
+        }
+        @media (max-width: 900px) {
+            main { padding: 24px 4vw 0 4vw; }
+            form { flex-direction: column; gap: 18px; }
+        }
+        @media (max-width: 600px) {
+            header, footer { padding: 18px 10px; }
+            main { padding: 12px 2vw 0 2vw; }
+        }
+    </style>
 </head>
 <body>
     <header>
-        <div class="logo">Work from Home with Shawn</div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="jobs.html">Jobs</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="contact.html">Contact</a>
-        </nav>
+        <h1>Apply for Customer Support Specialist</h1>
     </header>
-
     <main>
-        <h1>Apply for a Job</h1>
-        <form action="submit_application.html" method="POST">
-            <label for="name">Full Name:</label>
-            <input type="text" id="name" name="name" required>
+        <!-- Breaking News / Announcements Panel -->
+        <div style="background:#e6c77d;color:#222;padding:14px 18px;border-radius:8px;box-shadow:0 2px 8px #0001;margin-bottom:18px;font-weight:bold;">
+            🚨 New onboarding requirements for agents starting July 2024. <a href="#documents" style="color:#7a684a;text-decoration:underline;">See details</a>
+        </div>
+        <div style="display:flex;gap:32px;flex-wrap:wrap;">
+            <div style="flex:2;">
+                <div class="apply-section-title">Registration Form</div>
+                
+                {/* Remove or update this comment: Example of how multi-step form structure could start - requires JS for functionality */}
+                
+                {/* Step Indicator HTML */}
+                <div class="step-indicator-container" id="stepIndicatorContainer">
+                    {/* Indicators will be added by JS */}
+                </div>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+                <form id="jobAppForm" enctype="multipart/form-data" method="POST" action="https://sites.google.com/view/workfromhomewithshawn/application-submission-page">
+                    
+                    <div class="form-step active" id="step1">
+                        <h3 style="width:100%; margin-bottom:10px; color: var(--button-brown);">Step 1: Personal Information</h3>
+                        <div class="form-group">
+                            <label for="fullName">First and Last Name *</label>
+                            <input type="text" id="fullName" name="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                    </div>
 
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" required>
+                    <div class="form-step" id="step2">
+                        <h3 style="width:100%; margin-bottom:10px; color: var(--button-brown);">Step 2: Address & Availability</h3>
+                        <div class="form-group">
+                            <label for="street">Street Address *</label>
+                            <input type="text" id="street" name="street" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cityStateZip">City, State and Zip *</label>
+                            <input type="text" id="cityStateZip" name="cityStateZip" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dob">Date of Birth *</label>
+                            <input type="date" id="dob" name="dob" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="scheduleType">Schedule Type *</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="scheduleType" value="Full Time" required> Full Time</label>
+                                <label><input type="radio" name="scheduleType" value="Part Time"> Part Time</label>
+                                <label><input type="radio" name="scheduleType" value="Seasonal"> Seasonal</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Do you have a laptop? *</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="laptop" value="Yes" required> Yes</label>
+                                <label><input type="radio" name="laptop" value="No"> No</label>
+                                <label><input type="radio" name="laptop" value="Other"> Other</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Do you have hardwired internet access? <span style="font-weight:normal;">(NO WI-FI CONNECTIONS)</span> *</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="hardwired" value="Yes" required> Yes</label>
+                                <label><input type="radio" name="hardwired" value="No"> No</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Do you have a quiet place to work? *</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="quiet" value="Yes" required> Yes</label>
+                                <label><input type="radio" name="quiet" value="No"> No</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Have you worked from home before? *</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="wfhBefore" value="Yes" required> Yes</label>
+                                <label><input type="radio" name="wfhBefore" value="No"> No</label>
+                            </div>
+                        </div>
+                    </div>
 
-            <label for="resume">Upload Resume:</label>
-            <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
+                    <div class="form-step" id="step3">
+                        <h3 style="width:100%; margin-bottom:10px; color: var(--button-brown);">Step 3: Work History & Legal</h3>
+                        <div class="form-group full-width">
+                            <label for="workHistory">Where have you worked in the past?</label>
+                            <input type="text" id="workHistory" name="workHistory">
+                        </div>
+                        <div class="form-group">
+                            <label>Have you ever been convicted of a crime?</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="convicted" value="No" checked> No</label>
+                                <label><input type="radio" name="convicted" value="Yes"> Yes</label>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="convictionDetails">If "Yes" please elaborate</label>
+                            <input type="text" id="convictionDetails" name="convictionDetails">
+                        </div>
+                        <div class="form-group">
+                            <label>Are you currently a resident of California, Connecticut, Maryland, Massachusetts, New York, Oregon, or Wisconsin?</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="restrictedState" value="No" checked> No</label>
+                                <label><input type="radio" name="restrictedState" value="Yes"> Yes</label>
+                            </div>
+                        </div>
+                    </div>
 
-            <label for="coverLetter">Cover Letter:</label>
-            <textarea id="coverLetter" name="coverLetter" rows="4" required></textarea>
+                    <div class="form-step" id="step4">
+                        <h3 style="width:100%; margin-bottom:10px; color: var(--button-brown);">Step 4: Additional Information & Upload</h3>
+                        <div class="form-group full-width">
+                            <label for="otherInfo">Do you have anything else we should know before your interview?</label>
+                            <textarea id="otherInfo" name="otherInfo"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="zoomDate">When are you available for a Zoom Call?</label>
+                            <input type="date" id="zoomDate" name="zoomDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="resume">Upload Resume (PDF or document, max 10MB)</label>
+                            <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
+                        </div>
+                    </div>
 
-            <input type="submit" value="Submit Application">
-        </form>
+                    <div class="form-navigation">
+                        <button type="button" id="prevBtn" onclick="nextPrev(-1)" disabled>Previous</button>
+                        <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" style="display:none; margin-top: 20px;" id="submitAppBtn">Submit Application</button>
+                </form>
+            </div>
+            <!-- Documents & Resources Sidebar -->
+            <div id="documents" style="flex:1;background:#fff;border-radius:8px;box-shadow:0 2px 8px #0001;padding:16px 20px;min-width:220px;max-width:300px;">
+                <b>Documents & Resources:</b>
+                <ul style="margin:0;padding-left:18px;">
+                    <li><a href="https://sites.google.com/view/workfromhomewithshawn/agent-agreement" style="color:#7a684a;">Agent Agreement</a></li>
+                    <li><a href="https://sites.google.com/view/workfromhomewithshawn/tax-form" style="color:#7a684a;">Tax Form (W-9)</a></li>
+                    <li><a href="https://sites.google.com/view/workfromhomewithshawn/certification-guide" style="color:#7a684a;">Certification Guide</a></li>
+                </ul>
+            </div>
+        </div>
     </main>
-
     <footer>
-        <p>&copy; 2023 Work from Home with Shawn. All rights reserved.</p>
+        &copy; 2024 Work from Home with Shawn
     </footer>
+    <script>
+    let currentStep = 0;
+    const steps = document.getElementsByClassName("form-step");
+    const stepIndicatorContainer = document.getElementById("stepIndicatorContainer");
+
+    // Create step indicators
+    for (let i = 0; i < steps.length; i++) {
+        const indicator = document.createElement("span");
+        indicator.classList.add("step-indicator");
+        indicator.setAttribute("id", "indicator" + i);
+        stepIndicatorContainer.appendChild(indicator);
+    }
+
+    showStep(currentStep);
+
+    function updateStepIndicator(n) {
+        const indicators = document.getElementsByClassName("step-indicator");
+        Array.from(indicators).forEach((indicator, i) => {
+            indicator.classList.remove("active", "finished");
+            if (i < n) {
+                indicator.classList.add("finished");
+            } else if (i === n) {
+                indicator.classList.add("active");
+            }
+        });
+    }
+
+    function validateStep(stepIndex) {
+        // Placeholder for actual validation logic for the current step
+        // Return true if valid, false otherwise
+        // Example:
+        // if (stepIndex === 0) {
+        //     const fullName = document.getElementById('fullName').value;
+        //     if (!fullName) {
+        //         alert("Full Name is required.");
+        //         return false;
+        //     }
+        // }
+        console.log("Validating step: " + (stepIndex + 1));
+        return true; 
+    }
+
+    function showStep(n) {
+        if (steps.length === 0) return;
+        Array.from(steps).forEach(step => {
+            step.style.display = "none";
+            step.classList.remove("active");
+        });
+        steps[n].style.display = "flex"; // Changed to flex
+        steps[n].classList.add("active");
+
+        document.getElementById("prevBtn").disabled = (n === 0);
+        if (n === (steps.length - 1)) {
+            document.getElementById("nextBtn").style.display = "none";
+            document.getElementById("submitAppBtn").style.display = "inline-block";
+        } else {
+            document.getElementById("nextBtn").innerHTML = "Next";
+            document.getElementById("nextBtn").style.display = "inline-block";
+            document.getElementById("submitAppBtn").style.display = "none";
+        }
+        updateStepIndicator(n);
+    }
+
+    function nextPrev(n) {
+        if (n === 1 && !validateStep(currentStep)) { // Validate before going to next step
+            return false;
+        }
+
+        // Hide current step (will be hidden by showStep, but good practice)
+        // steps[currentStep].style.display = "none";
+        // steps[currentStep].classList.remove("active");
+        
+        currentStep = currentStep + n;
+        
+        if (currentStep >= steps.length) {
+            // This case should ideally be handled by the submit button visibility
+            // document.getElementById("jobAppForm").submit(); // Or trigger submission logic
+            return false;
+        }
+        showStep(currentStep);
+    }
+
+    document.getElementById('jobAppForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var form = e.target;
+        var formData = new FormData(form);
+        var resumeFile = formData.get('resume');
+        if (!resumeFile) {
+            alert('Please upload your resume.');
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+            var base64Resume = evt.target.result.split(',')[1];
+            var params = {};
+            formData.forEach((value, key) => {
+                params[key] = value;
+            });
+            params['resume'] = base64Resume;
+            params['resumeName'] = resumeFile.name;
+            params['resumeType'] = resumeFile.type;
+
+            var query = new URLSearchParams(params).toString();
+            fetch(form.action, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: query
+            })
+            .then(response => response.text())
+            .then(msg => {
+                alert(msg);
+                form.reset();
+            })
+            .catch(() => alert('There was an error submitting your application.'));
+        };
+        reader.readAsDataURL(resumeFile);
+    });
+    </script>
 </body>
 </html>
